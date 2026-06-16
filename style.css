@@ -1,0 +1,98 @@
+/* Configuração geral da página */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+/* O card branco do formulário */
+.login-container {
+    background: white;
+    padding: 2.5rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    width: 320px;
+    text-align: center;
+}
+
+/* Tamanho e centralização da logo */
+.logo {
+    max-width: 180px;
+    height: auto;
+    display: block;
+    margin: 0 auto 0.5rem auto;
+}
+
+/* Texto "Acesse sua conta" */
+.login-container > p {
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Campos de entrada (Usuário e Senha) */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+}
+
+/* Link "Esqueceu a senha?" */
+.forgot-password {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin: 10px 0 20px 0;
+    text-decoration: none;
+    text-align: right; /* Alinha à direita igual ao layout original */
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Botão ENTRAR */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff6b96;
+    color: white;
+    border: none;
+    border-radius: 20px; /* Bordas mais arredondadas igual à imagem */
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background-color: #e65a82;
+}
+
+/* Bloco "Novo por aqui? Cadastre-se" */
+.register-link {
+    font-size: 0.9rem;
+    color: #333;
+    margin-top: 25px;
+    margin-bottom: 0;
+}
+
+.register-link a {
+    color: #ff6b96;
+    text-decoration: none;
+    font-weight: bold;
+    display: block; /* Joga o "Cadastre-se" para a linha de baixo se quiser idêntico à imagem */
+    margin-top: 5px;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
