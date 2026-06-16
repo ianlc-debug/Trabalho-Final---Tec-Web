@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const usernameInput = document.getElementById("username-input");
     const welcomeUser = document.getElementById("welcome-user");
 
-    // ADICIONADO: Captura o botão de voltar para a tela de login
+    // Captura o botão de voltar para a tela de login
     const logoutBtn = document.getElementById("logout-btn");
 
     // AÇÃO 1: Fazer Login (Ir para a Dashboard)
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Exibe a Tela de Login novamente
             loginScreen.classList.remove("hidden");
 
-            // Opcional: Limpa o campo de senha para o próximo login por segurança
+            // Limpa o campo de senha para o próximo login por segurança
             const passwordInput = loginForm.querySelector('input[type="password"]');
             if (passwordInput) passwordInput.value = "";
         });
