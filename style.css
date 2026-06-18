@@ -9,22 +9,23 @@
 body {
     background-color: #f4f4f4;
     color: #333;
-    overflow: hidden;
+    min-height: 100vh;
 }
 
-/* Classe utilitária para esconder elementos */
+/* Classe utilitária essencial para ocultar as telas inativas */
 .hidden {
     display: none !important;
 }
 
-/* ================= ESTILOS: TELA DE LOGIN ================= */
+/* ================= ESTILOS PROPRIOS DAS TELAS DE LOGIN / RECUPERAÇÃO / CADASTRO ================= */
 .login-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
     background-color: #f4f4f4;
+    padding: 20px;
 }
 
 .login-container {
@@ -32,8 +33,10 @@ body {
     padding: 2.5rem 2rem;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    width: 320px;
+    width: 100%;
+    max-width: 340px; /* Garante tamanho ideal do card */
     text-align: center;
+    position: relative; /* Necessário para posicionar a seta de voltar */
 }
 
 .logo {
@@ -47,17 +50,27 @@ body {
     color: #333;
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
+    font-weight: bold;
 }
 
-input[type="text"], input[type="password"] {
+/* Inputs de Texto, Senha e E-mail uniformes */
+input[type="text"], 
+input[type="password"], 
+input[type="email"] {
     width: 100%;
     padding: 12px;
     margin: 8px 0;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 0.95rem;
+    outline: none;
 }
 
+input:focus {
+    border-color: #ff6b96;
+}
+
+/* Links auxiliares */
 .forgot-password {
     display: block;
     font-size: 0.85rem;
@@ -67,22 +80,10 @@ input[type="text"], input[type="password"] {
     text-align: right;
 }
 
-.forgot-password:hover { text-decoration: underline; }
-
-form button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #ff6b96;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background 0.2s;
+.forgot-password:hover, 
+#register-link:hover {
+    text-decoration: underline;
 }
-
-form button[type="submit"]:hover { background-color: #e65a82; }
 
 .register-link {
     font-size: 0.9rem;
@@ -98,24 +99,61 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     margin-top: 5px;
 }
 
-.register-link a:hover { text-decoration: underline; }
+/* Botões padrões de formulário */
+form button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff6b96;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+form button[type="submit"]:hover { 
+    background-color: #e65a82; 
+}
+
+/* Estilo da setinha de voltar nos blocos */
+.back-arrow-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+    color: #ff6b96;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.back-arrow-btn:hover {
+    color: #e65a82;
+    transform: scale(1.1);
+}
 
 
-/* ================= ESTILOS: DASHBOARD ================= */
+/* ================= ESTILOS EXCLUSIVOS DA DASHBOARD ================= */
 .dashboard-container {
     display: flex;
     height: 100vh;
     width: 100vw;
     background-color: #fafafa;
+    overflow: hidden;
 }
 
-/* Coluna 1: Sidebar */
 .sidebar {
     width: 260px;
     background-color: #fdeaa6;
     padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
 }
 
 .sidebar-logo {
@@ -149,7 +187,6 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     color: #000;
 }
 
-/* Layout da Direita */
 .main-layout {
     flex: 1;
     display: flex;
@@ -157,7 +194,6 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     overflow-y: auto;
 }
 
-/* Barra Superior */
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -187,7 +223,6 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     background-color: #ccc;
 }
 
-/* Grade de Conteúdo */
 .content-grid {
     display: grid;
     grid-template-columns: 1fr 300px;
@@ -201,7 +236,6 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     gap: 2rem;
 }
 
-/* Banner */
 .welcome-banner {
     background-color: #dcd6ff;
     padding: 2.5rem;
@@ -219,7 +253,6 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     color: #444;
 }
 
-/* Seções */
 .dashboard-section {
     background: #fff;
     padding: 1.5rem;
@@ -242,7 +275,6 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     font-size: 0.9rem;
 }
 
-/* Caixa Fictícia de Estado Vazio (Pedidos) */
 .empty-state-box {
     background-color: #f9f9f9;
     border: 2px dashed #e0e0e0;
@@ -253,7 +285,6 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     font-style: italic;
 }
 
-/* Coluna 3: Cards da Direita */
 .right-bar {
     display: flex;
     flex-direction: column;
@@ -267,13 +298,13 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     border: 1px solid #f0f0f0;
 }
 
-.tasks-card ul { list-style: none; margin: 1rem 0; }
-.tasks-card li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-    font-size: 0.95rem;
+.empty-tasks {
+    margin-top: 15px;
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 10px 0;
 }
 
 .create-group-card { background-color: #ffe3ee; }
@@ -293,14 +324,4 @@ form button[type="submit"]:hover { background-color: #e65a82; }
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
-}
-
-/* Estilização para o estado vazio das tarefas */
-.empty-tasks {
-    margin-top: 15px;
-    text-align: center;
-    color: #777;
-    font-style: italic;
-    font-size: 0.9rem;
-    padding: 10px 0;
 }
