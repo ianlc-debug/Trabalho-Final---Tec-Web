@@ -16,42 +16,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const forgotPasswordLink = document.getElementById("forgot-password-link");
     const registerLink = document.getElementById("register-link");
     
-    // Botões de Voltar
+    // Botões de Voltar e Logout
     const backToLoginButtons = document.querySelectorAll(".back-to-login");
     const logoutBtn = document.getElementById("logout-btn");
 
     // --- NAVEGAÇÃO DA TELA DE LOGIN ---
-
-    // Ir para tela de Esqueceu a Senha
     forgotPasswordLink.addEventListener("click", (e) => {
         e.preventDefault();
         loginScreen.classList.add("hidden");
         forgotScreen.classList.remove("hidden");
     });
 
-    // Ir para tela de Cadastre-se
     registerLink.addEventListener("click", (e) => {
         e.preventDefault();
         loginScreen.classList.add("hidden");
         signupScreen.classList.remove("hidden");
     });
 
-    // Função universal para as setas voltarem para o Login
     backToLoginButtons.forEach(button => {
         button.addEventListener("click", () => {
             forgotScreen.classList.add("hidden");
             signupScreen.classList.add("hidden");
             loginScreen.classList.remove("hidden");
-            
-            // Limpa os formulários ao voltar
             forgotForm.reset();
             signupForm.reset();
         });
     });
 
     // --- ENVIOS DE FORMULÁRIO (SUBMITS) ---
-
-    // Submit: Entrar na Dashboard
     if (loginForm) {
         loginForm.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -64,43 +56,111 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Submit: Alterar Senha (Esqueceu a senha)
     if (forgotForm) {
         forgotForm.addEventListener("submit", (event) => {
             event.preventDefault();
-            
-            // Exibe mensagem de sucesso solicitada
             alert("A troca de senha foi concluída com sucesso!");
-            
-            // Redireciona de volta para a tela de login
             forgotScreen.classList.add("hidden");
             loginScreen.classList.remove("hidden");
             forgotForm.reset();
         });
     }
 
-    // Submit: Cadastrar Nova Conta
     if (signupForm) {
         signupForm.addEventListener("submit", (event) => {
             event.preventDefault();
-            
-            // Exibe mensagem de sucesso
             alert("Cadastro concluído com sucesso! Agora você já pode fazer login.");
-            
-            // Redireciona de volta para a tela de login
             signupScreen.classList.add("hidden");
             loginScreen.classList.remove("hidden");
             signupForm.reset();
         });
     }
 
-    // --- LOGOUT (DASHBOARD PARA LOGIN) ---
     if (logoutBtn) {
         logoutBtn.addEventListener("click", (event) => {
             event.preventDefault();
             dashboardScreen.classList.add("hidden");
             loginScreen.classList.remove("hidden");
-            loginForm.reset(); // Limpa dados da sessão anterior
+            loginForm.reset();
+        });
+    }
+
+
+    // ================= MODAL E RENDERIZAÇÃO DE ATÉ 5 GRUPOS =================
+    
+    const createGroupBtn = document.querySelector(".btn-create");
+    const modalOverlay = document.getElementById("create-group-modal");
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    const createGroupForm = document.getElementById("create-group-form");
+    
+    const emptyGroupsState = document.getElementById("empty-groups-state");
+    const groupsGrid = document.getElementById("groups-grid");
+
+    // Cores pastéis baseadas na sua identidade visual
+    const cardColors = ["#e3f6e6", "#fde3ed", "#fce9b7", "#e3f1fd"];
+    let totalGroupsCreated = 0;
+
+    // Abrir o modal
+    if (createGroupBtn && modalOverlay) {
+        createGroupBtn.addEventListener("click", () => {
+            modalOverlay.classList.remove("hidden");
+        });
+    }
+
+    // Fechar o modal no X
+    if (closeModalBtn && modalOverlay) {
+        closeModalBtn.addEventListener("click", () => {
+            modalOverlay.classList.add("hidden");
+        });
+    }
+
+    // Fechar o modal clicando fora da caixa
+    if (modalOverlay) {
+        modalOverlay.addEventListener("click", (event) => {
+            if (event.target === modalOverlay) {
+                modalOverlay.classList.add("hidden");
+            }
+        });
+    }
+
+    // Formulário de Criação Concluído
+    if (createGroupForm) {
+        createGroupForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const groupName = createGroupForm.querySelector('input[placeholder="Nome do Grupo"]').value.trim();
+            const groupSubject = createGroupForm.querySelector('input[placeholder="Matéria/Curso"]').value.trim();
+
+            // Esconde a mensagem de "Nenhum grupo no momento"
+            if (totalGroupsCreated === 0 && emptyGroupsState) {
+                emptyGroupsState.classList.add("hidden");
+            }
+
+            // AJUSTE: O operador % faz as 4 cores pastéis girarem infinitamente sem dar erro
+            const colorIndex = totalGroupsCreated % cardColors.length;
+            const currentCardColor = cardColors[colorIndex];
+
+            // AJUSTE: Permite criar infinitamente, mas só bota no HTML se tiver menos de 5 na tela
+            if (totalGroupsCreated < 5) {
+                const cardHTML = `
+                    <div class="custom-group-card" style="background-color: ${currentCardColor};">
+                        <div class="group-card-icon-circle">📖</div>
+                        <h4>${groupName}</h4>
+                        <p>${groupSubject}</p>
+                    </div>
+                `;
+                groupsGrid.insertAdjacentHTML("beforeend", cardHTML);
+            }
+
+            // Sempre soma o total de grupos criados pelo usuário
+            totalGroupsCreated++;
+
+            // Mensagem de sucesso aparece SEMPRE, sem limites de criação!
+            alert("O grupo foi criado com sucesso!");
+
+            // Reseta o modal
+            modalOverlay.classList.add("hidden");
+            createGroupForm.reset();
         });
     }
 });

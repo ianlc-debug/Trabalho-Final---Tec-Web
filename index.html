@@ -87,9 +87,10 @@
                             <h2>Grupos em destaque</h2>
                             <a href="#" class="see-all">ver todos →</a>
                         </div>
-                        <div class="empty-state-box">
+                        <div id="empty-groups-state" class="empty-state-box">
                             <p>Você não está em nenhum grupo no momento.</p>
                         </div>
+                        <div id="groups-grid" class="groups-layout-grid"></div>
                     </section>
 
                     <section class="dashboard-section">
@@ -121,5 +122,26 @@
     </div>
 
     <script src="script.js"></script>
+
+    <div id="create-group-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            
+            <h2>Criar Novo Grupo</h2>
+            
+            <form id="create-group-form">
+                <input type="text" placeholder="Nome do Grupo" required>
+                <input type="text" placeholder="Matéria/Curso" required>
+                
+                <select required>
+                    <option value="" disabled selected>Privacidade</option>
+                    <option value="publico">Aberto para todos</option>
+                    <option value="privado">Apenas convidados</option>
+                </select>
+                
+                <button type="submit">CONCLUIR</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
