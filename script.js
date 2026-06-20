@@ -1,166 +1,244 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Telas
+    // ================= SELECTORES DE TELAS E AUTENTICAÇÃO =================
     const loginScreen = document.getElementById("login-screen");
-    const forgotScreen = document.getElementById("forgot-screen");
     const signupScreen = document.getElementById("signup-screen");
+    const forgotScreen = document.getElementById("forgot-screen");
     const dashboardScreen = document.getElementById("dashboard-screen");
 
-    // Formulários e Inputs
     const loginForm = document.getElementById("login-form");
-    const forgotForm = document.getElementById("forgot-form");
     const signupForm = document.getElementById("signup-form");
-    const usernameInput = document.getElementById("username-input");
-    const welcomeUser = document.getElementById("welcome-user");
+    const forgotForm = document.getElementById("forgot-form");
 
-    // Links de Redirecionamento da Tela de Login
-    const forgotPasswordLink = document.getElementById("forgot-password-link");
+    const usernameInput = document.getElementById("username-input");
+    const welcomeUserText = document.getElementById("welcome-user");
+
+    // Links de transição de tela
     const registerLink = document.getElementById("register-link");
-    
-    // Botões de Voltar e Logout
+    const forgotPasswordLink = document.getElementById("forgot-password-link");
     const backToLoginButtons = document.querySelectorAll(".back-to-login");
     const logoutBtn = document.getElementById("logout-btn");
 
-    // --- NAVEGAÇÃO DA TELA DE LOGIN ---
-    forgotPasswordLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        loginScreen.classList.add("hidden");
-        forgotScreen.classList.remove("hidden");
-    });
+    // ================= COMPORTAMENTO: FLUXO DE TELAS (AUTH) =================
 
-    registerLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        loginScreen.classList.add("hidden");
-        signupScreen.classList.remove("hidden");
-    });
+    // Ir para tela de Cadastro
+    if (registerLink) {
+        registerLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            loginScreen.classList.add("hidden");
+            signupScreen.classList.remove("hidden");
+        });
+    }
 
-    backToLoginButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            forgotScreen.classList.add("hidden");
+    // Ir para tela de Recuperar Senha
+    if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            loginScreen.classList.add("hidden");
+            forgotScreen.classList.remove("hidden");
+        });
+    }
+
+    // Botões de voltar (setinhas) para o Login
+    backToLoginButtons.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
             signupScreen.classList.add("hidden");
+            forgotScreen.classList.add("hidden");
             loginScreen.classList.remove("hidden");
-            forgotForm.reset();
-            signupForm.reset();
         });
     });
 
-    // --- ENVIOS DE FORMULÁRIO (SUBMITS) ---
+    // Simulação de Login (Entrar na Dashboard)
     if (loginForm) {
-        loginForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            const nomeUsuario = usernameInput.value.trim().toUpperCase();
-            if (nomeUsuario) {
-                welcomeUser.textContent = `OLÁ, ${nomeUsuario}`;
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const userValue = usernameInput.value.trim() || "ALUNO(A)";
+            
+            // Personaliza o banner de boas-vindas com o nome digitado
+            if (welcomeUserText) {
+                welcomeUserText.textContent = `OLÁ, ${userValue.toUpperCase()}`;
             }
+
             loginScreen.classList.add("hidden");
             dashboardScreen.classList.remove("hidden");
         });
     }
 
-    if (forgotForm) {
-        forgotForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            alert("A troca de senha foi concluída com sucesso!");
-            forgotScreen.classList.add("hidden");
-            loginScreen.classList.remove("hidden");
-            forgotForm.reset();
-        });
-    }
-
+    // Simulação de Cadastro bem-sucedido
     if (signupForm) {
-        signupForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            alert("Cadastro concluído com sucesso! Agora você já pode fazer login.");
+        signupForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            alert("Conta criada com sucesso! Faça seu login.");
             signupScreen.classList.add("hidden");
             loginScreen.classList.remove("hidden");
             signupForm.reset();
         });
     }
 
+    // Simulação de Troca de Senha
+    if (forgotForm) {
+        forgotForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            alert("Senha alterada com sucesso!");
+            forgotScreen.classList.add("hidden");
+            loginScreen.classList.remove("hidden");
+            forgotForm.reset();
+        });
+    }
+
+    // Botão de Logout (Sair da Dashboard)
     if (logoutBtn) {
-        logoutBtn.addEventListener("click", (event) => {
-            event.preventDefault();
+        logoutBtn.addEventListener("click", (e) => {
+            e.preventDefault();
             dashboardScreen.classList.add("hidden");
             loginScreen.classList.remove("hidden");
-            loginForm.reset();
+            if (loginForm) loginForm.reset();
         });
     }
 
 
-    // ================= MODAL E RENDERIZAÇÃO DE ATÉ 5 GRUPOS =================
-    
+    // ================= NAVEGAÇÃO ENTRE ABAS DA DASHBOARD =================
+    const navInicioBtn = document.getElementById("nav-inicio-btn");
+    const navGruposBtn = document.getElementById("nav-grupos-btn");
+    const viewInicio = document.getElementById("view-inicio");
+    const viewGrupos = document.getElementById("view-grupos");
+
+    function resetActiveNav() {
+        navInicioBtn.classList.remove("active");
+        navGruposBtn.classList.remove("active");
+    }
+
+    if (navInicioBtn && navGruposBtn) {
+        navInicioBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav();
+            navInicioBtn.classList.add("active");
+            viewGrupos.classList.add("hidden");
+            viewInicio.classList.remove("hidden");
+        });
+
+        navGruposBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav();
+            navGruposBtn.classList.add("active");
+            viewInicio.classList.add("hidden");
+            viewGrupos.classList.remove("hidden");
+        });
+    }
+
+
+    // ================= GERENCIAMENTO DINÂMICO DOS GRUPOS =================
     const createGroupBtn = document.querySelector(".btn-create");
     const modalOverlay = document.getElementById("create-group-modal");
     const closeModalBtn = document.getElementById("close-modal-btn");
     const createGroupForm = document.getElementById("create-group-form");
     
+    // Containers da aba Início (Destaques)
     const emptyGroupsState = document.getElementById("empty-groups-state");
     const groupsGrid = document.getElementById("groups-grid");
 
-    // Cores pastéis baseadas na sua identidade visual
+    // Containers da aba Grupos: Seção Meus Grupos
+    const emptyMyGroupsState = document.getElementById("empty-my-groups-state");
+    const myGroupsGrid = document.getElementById("my-groups-grid");
+
+    // Containers da aba Grupos: Seção Grupos Privados
+    const joinPrivateGroupForm = document.getElementById("join-private-group-form");
+    const privateGroupCodeInput = document.getElementById("private-group-code-input");
+    const emptyPrivateGroupsState = document.getElementById("empty-private-groups-state");
+    const privateGroupsGrid = document.getElementById("private-groups-grid");
+
+    // Paleta de Cores Pasteis Rotativas para os Cards de Grupo
     const cardColors = ["#e3f6e6", "#fde3ed", "#fce9b7", "#e3f1fd"];
     let totalGroupsCreated = 0;
+    let totalPrivateGroupsJoined = 0;
 
-    // Abrir o modal
+    // Controladores do Modal de Criação
     if (createGroupBtn && modalOverlay) {
-        createGroupBtn.addEventListener("click", () => {
-            modalOverlay.classList.remove("hidden");
-        });
+        createGroupBtn.addEventListener("click", () => modalOverlay.classList.remove("hidden"));
     }
-
-    // Fechar o modal no X
     if (closeModalBtn && modalOverlay) {
-        closeModalBtn.addEventListener("click", () => {
-            modalOverlay.classList.add("hidden");
-        });
+        closeModalBtn.addEventListener("click", () => modalOverlay.classList.add("hidden"));
     }
-
-    // Fechar o modal clicando fora da caixa
     if (modalOverlay) {
-        modalOverlay.addEventListener("click", (event) => {
-            if (event.target === modalOverlay) {
-                modalOverlay.classList.add("hidden");
-            }
+        modalOverlay.addEventListener("click", (e) => {
+            if (e.target === modalOverlay) modalOverlay.classList.add("hidden");
         });
     }
 
-    // Formulário de Criação Concluído
+    // AÇÃO: Usuário CRIA um grupo no Modal
     if (createGroupForm) {
         createGroupForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
+            // Captura os dados internos do Form
             const groupName = createGroupForm.querySelector('input[placeholder="Nome do Grupo"]').value.trim();
             const groupSubject = createGroupForm.querySelector('input[placeholder="Matéria/Curso"]').value.trim();
+            const currentCardColor = cardColors[totalGroupsCreated % cardColors.length];
 
-            // Esconde a mensagem de "Nenhum grupo no momento"
-            if (totalGroupsCreated === 0 && emptyGroupsState) {
-                emptyGroupsState.classList.add("hidden");
-            }
-
-            // AJUSTE: O operador % faz as 4 cores pastéis girarem infinitamente sem dar erro
-            const colorIndex = totalGroupsCreated % cardColors.length;
-            const currentCardColor = cardColors[colorIndex];
-
-            // AJUSTE: Permite criar infinitamente, mas só bota no HTML se tiver menos de 5 na tela
+            // 1. Renderiza no Início (Destaques) -> Limite estético de até 5 cards no painel inicial
             if (totalGroupsCreated < 5) {
-                const cardHTML = `
+                if (totalGroupsCreated === 0 && emptyGroupsState) {
+                    emptyGroupsState.classList.add("hidden");
+                }
+                const featuredCardHTML = `
                     <div class="custom-group-card" style="background-color: ${currentCardColor};">
                         <div class="group-card-icon-circle">📖</div>
                         <h4>${groupName}</h4>
                         <p>${groupSubject}</p>
                     </div>
                 `;
-                groupsGrid.insertAdjacentHTML("beforeend", cardHTML);
+                if (groupsGrid) groupsGrid.insertAdjacentHTML("beforeend", featuredCardHTML);
             }
 
-            // Sempre soma o total de grupos criados pelo usuário
+            // 2. Renderiza na Seção "Meus Grupos" (Na aba de Grupos) -> Sem limite de cards
+            if (totalGroupsCreated === 0 && emptyMyGroupsState) {
+                emptyMyGroupsState.classList.add("hidden");
+            }
+            const myGroupCardHTML = `
+                <div class="custom-group-card" style="background-color: ${currentCardColor};">
+                    <div class="group-card-icon-circle">📖</div>
+                    <h4>${groupName}</h4>
+                    <p>${groupSubject}</p>
+                </div>
+            `;
+            if (myGroupsGrid) myGroupsGrid.insertAdjacentHTML("beforeend", myGroupCardHTML);
+
             totalGroupsCreated++;
-
-            // Mensagem de sucesso aparece SEMPRE, sem limites de criação!
             alert("O grupo foi criado com sucesso!");
-
-            // Reseta o modal
             modalOverlay.classList.add("hidden");
             createGroupForm.reset();
+        });
+    }
+
+    // AÇÃO: Usuário INGRESSA em um grupo privado digitando o código
+    if (joinPrivateGroupForm) {
+        joinPrivateGroupForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            
+            const groupCode = privateGroupCodeInput.value.trim().toUpperCase();
+            const currentCardColor = cardColors[totalPrivateGroupsJoined % cardColors.length];
+
+            // Esconde a mensagem de lista vazia da seção de Grupos Privados
+            if (totalPrivateGroupsJoined === 0 && emptyPrivateGroupsState) {
+                emptyPrivateGroupsState.classList.add("hidden");
+            }
+
+            // Constrói o card correspondente ao código digitado
+            const privateCardHTML = `
+                <div class="custom-group-card" style="background-color: ${currentCardColor};">
+                    <div class="group-card-icon-circle">🔒</div>
+                    <h4>Grupo ${groupCode}</h4>
+                    <p>Código Privado</p>
+                </div>
+            `;
+
+            if (privateGroupsGrid) {
+                privateGroupsGrid.insertAdjacentHTML("beforeend", privateCardHTML);
+            }
+            
+            totalPrivateGroupsJoined++;
+            alert(`Você ingressou no grupo privado ${groupCode} com sucesso!`);
+            joinPrivateGroupForm.reset();
         });
     }
 });

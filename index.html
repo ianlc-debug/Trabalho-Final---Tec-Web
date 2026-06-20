@@ -55,8 +55,8 @@
             <img src="assets/logo.png" alt="Logo Estudo + Juntos" class="sidebar-logo">
             <p class="sidebar-subtitle">Plataforma de grupo de estudos universitários</p>
             <nav class="menu">
-                <a href="#" class="active">🏠 Início</a>
-                <a href="#">👥 Grupos</a>
+                <a href="#" id="nav-inicio-btn" class="active">🏠 Início</a>
+                <a href="#" id="nav-grupos-btn">👥 Grupos</a>
                 <a href="#">📅 Agenda</a>
                 <a href="#">📁 Recursos</a>
                 <a href="#">💬 Mensagens</a>
@@ -76,32 +76,77 @@
 
             <div class="content-grid">
                 <main class="main-content">
-                    <section class="welcome-banner">
-                        <h1 id="welcome-user">OLÁ, ALUNA</h1>
-                        <p class="welcome-subtitle">Que bom ter você aqui</p>
-                        <p>Encontre grupos, participe de estudos e evolua ainda mais na universidade.</p>
-                    </section>
+                    
+                    <div id="view-inicio">
+                        <section class="welcome-banner">
+                            <h1 id="welcome-user">OLÁ, ALUNA</h1>
+                            <p class="welcome-subtitle">Que bom ter você aqui</p>
+                            <p>Encontre grupos, participe de estudos e evolua ainda mais na universidade.</p>
+                        </section>
 
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2>Grupos em destaque</h2>
-                            <a href="#" class="see-all">ver todos →</a>
-                        </div>
-                        <div id="empty-groups-state" class="empty-state-box">
-                            <p>Você não está em nenhum grupo no momento.</p>
-                        </div>
-                        <div id="groups-grid" class="groups-layout-grid"></div>
-                    </section>
+                        <section class="dashboard-section">
+                            <div class="section-header">
+                                <h2>Grupos em destaque</h2>
+                                <a href="#" class="see-all">ver todos →</a>
+                            </div>
+                            <div id="empty-groups-state" class="empty-state-box">
+                                <p>Você não está em nenhum grupo no momento.</p>
+                            </div>
+                            <div id="groups-grid" class="groups-layout-grid"></div>
+                        </section>
 
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2>Próximas sessões</h2>
-                            <a href="#" class="see-all">ver agenda →</a>
-                        </div>
-                        <div class="empty-state-box">
-                            <p>Você não possui nenhuma sessão de estudo agendada no momento.</p>
-                        </div>
-                    </section>
+                        <section class="dashboard-section">
+                            <div class="section-header">
+                                <h2>Próximas sessões</h2>
+                                <a href="#" class="see-all">ver agenda →</a>
+                            </div>
+                            <div class="empty-state-box">
+                                <p>Você não possui nenhuma sessão de estudo agendada no momento.</p>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div id="view-grupos" class="hidden">
+                        
+                        <section class="dashboard-section">
+                            <div class="section-header">
+                                <h2>Meus Grupos</h2>
+                            </div>
+                            <div id="empty-my-groups-state" class="empty-state-box">
+                                <p>Você ainda não criou nenhum grupo.</p>
+                            </div>
+                            <div id="my-groups-grid" class="groups-layout-grid"></div>
+                        </section>
+
+                        <section class="dashboard-section">
+                            <div class="section-header">
+                                <h2>Grupos Privados</h2>
+                            </div>
+                            
+                            <div class="private-code-container">
+                                <p class="code-instruction">Digite o código de um grupo privado para solicitar a entrada:</p>
+                                <form id="join-private-group-form" class="code-input-container">
+                                    <input type="text" id="private-group-code-input" placeholder="Ex: MAT-105" required>
+                                    <button type="submit" class="btn-join">Ingressar no Grupo</button>
+                                </form>
+                            </div>
+
+                            <div id="empty-private-groups-state" class="empty-state-box">
+                                <p>Você não está em nenhum grupo privado no momento.</p>
+                            </div>
+                            <div id="private-groups-grid" class="groups-layout-grid"></div>
+                        </section>
+
+                        <section class="dashboard-section">
+                            <div class="section-header">
+                                <h2>Grupos Abertos</h2>
+                            </div>
+                            <div class="empty-state-box">
+                                <p>Nenhum grupo aberto cadastrado no momento.</p>
+                            </div>
+                        </section>
+                    </div>
+
                 </main>
 
                 <aside class="right-bar">
@@ -126,19 +171,15 @@
     <div id="create-group-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="close-modal-btn" class="close-btn">&times;</button>
-            
             <h2>Criar Novo Grupo</h2>
-            
             <form id="create-group-form">
                 <input type="text" placeholder="Nome do Grupo" required>
                 <input type="text" placeholder="Matéria/Curso" required>
-                
                 <select required>
                     <option value="" disabled selected>Privacidade</option>
                     <option value="publico">Aberto para todos</option>
                     <option value="privado">Apenas convidados</option>
                 </select>
-                
                 <button type="submit">CONCLUIR</button>
             </form>
         </div>
