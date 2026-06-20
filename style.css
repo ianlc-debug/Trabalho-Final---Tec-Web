@@ -164,6 +164,8 @@ a:hover {
     color: #94a3b8;
     margin-bottom: 35px;
     line-height: 1.4;
+    text-align: center;
+    font-weight: bold;
 }
 
 .menu {
@@ -193,6 +195,10 @@ a:hover {
     background-color: #eff6ff;
     color: #3b82f6;
     font-weight: 600;
+}
+
+.menu #logout-btn{
+    background-color: rgb(211, 211, 211);
 }
 
 /* Layout de Conteúdo Principal */
@@ -301,12 +307,21 @@ a:hover {
     line-height: 1.5;
 }
 
+.logo{
+    align-content: center;
+    border-radius: 10px;
+}
+
+img{
+    align-self: center;
+}
 
 /* ================= COMPONENTES DA DASHBOARD (SEÇÕES E CARDS) ================= */
 .dashboard-section {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    margin-top: 30px;
 }
 
 .section-header {

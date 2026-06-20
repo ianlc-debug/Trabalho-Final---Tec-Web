@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estudo+Juntos</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
 
@@ -55,21 +56,24 @@
             <img src="assets/logo.png" alt="Logo Estudo + Juntos" class="sidebar-logo">
             <p class="sidebar-subtitle">Plataforma de grupo de estudos universitários</p>
             <nav class="menu">
-                <a href="#" id="nav-inicio-btn" class="active">🏠 Início</a>
-                <a href="#" id="nav-grupos-btn">👥 Grupos</a>
-                <a href="#">📅 Agenda</a>
-                <a href="#">📁 Recursos</a>
-                <a href="#">💬 Mensagens</a>
-                <a href="#">👤 User</a>
-                <a href="#" id="logout-btn">↪️ Tela de login</a>
+                <a href="#" id="nav-inicio-btn" class="active"><i class="fa-solid fa-house"></i> Início</a>
+                <a href="#" id="nav-grupos-btn"><i class="fa-solid fa-users"></i> Grupos</a>
+                <a href="#"><i class="fa-solid fa-calendar"></i> Agenda</a>
+                <a href="#"><i class="fa-solid fa-folder"></i> Recursos</a>
+                <a href="#"><i class="fa-solid fa-comment"></i> Mensagens</a>
+                <a href="#"><i class="fa-solid fa-user"></i> User</a>
+                <a href="#" id="logout-btn">Tela de login</a>
             </nav>
         </aside>
 
         <div class="main-layout">
             <header class="top-bar">
-                <input type="text" placeholder="🔍 Pesquisar grupos, matérias..." class="search-bar">
+                <div>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Pesquisar grupos, matérias..." class="search-bar">
+                </div>
                 <div class="profile-area">
-                    <span class="notification-icon">🔔</span>
+                    <span class="notification-icon"><i class="fa-solid fa-bell"></i></span>
                     <div class="profile-pic"></div>
                 </div>
             </header>
