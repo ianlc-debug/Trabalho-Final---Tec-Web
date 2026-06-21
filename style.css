@@ -197,8 +197,18 @@ a:hover {
     font-weight: 600;
 }
 
-.menu #logout-btn{
-    background-color: rgb(211, 211, 211);
+/* Estilização corrigida para o botão de Logout */
+.menu #logout-btn {
+    background-color: transparent; /* Remove o cinza feio */
+    margin-top: auto;              /* Empurra o botão para o final da sidebar se desejar, ou mantenha no fluxo */
+    color: #64748b;                /* Mesma cor cinza elegante dos outros botões */
+    border-radius: 8px;
+}
+
+/* Efeito de passar o mouse exclusivo para o Logout (um vermelho bem suave para indicar saída) */
+.menu #logout-btn:hover {
+    background-color: #fef2f2;     /* Fundo vermelho bem clarinho */
+    color: #ef4444;                /* Texto e ícone em vermelho suave */
 }
 
 /* Layout de Conteúdo Principal */
