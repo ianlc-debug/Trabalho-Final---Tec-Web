@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
             navUserBtn.classList.remove("active");
         }
         if (navMensagensBtn) navMensagensBtn.classList.remove("active");
+        if (viewUser) viewUser.classList.add("hidden");
     }
 
     if (navMensagensBtn) {
@@ -141,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
             viewInicio.classList.add("hidden");
             viewGrupos.classList.remove("hidden");
             viewMensagens.classList.add("hidden");
+            if (viewUser) viewUser.classList.add("hidden");
         });
     }
 
@@ -156,6 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
             viewGrupos.classList.add("hidden");
             viewClassroom.classList.add("hidden");
             viewMensagens.classList.add("hidden");
+            if (viewUser) viewUser.classList.add("hidden");
 
             viewUser.classList.remove("hidden");
 
