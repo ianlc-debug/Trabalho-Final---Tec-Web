@@ -68,6 +68,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const verTodosLink = document.querySelector(".see-all");
+    if (verTodosLink) {
+        verTodosLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav();
+            if (navGruposBtn) navGruposBtn.classList.add("active");
+            viewClassroom.classList.add("hidden");
+            viewInicio.classList.add("hidden");
+            viewGrupos.classList.remove("hidden");
+        });
+    }
+
     // ================= BANCO DE DADOS EM MEMÓRIA SIMULADO =================
     const groupMemoryDatabase = {};
 
