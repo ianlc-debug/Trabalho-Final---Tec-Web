@@ -271,6 +271,7 @@ a:hover {
     background-image: url('assets/avatar-placeholder.png'); /* Caso possua */
     background-size: cover;
     border: 2px solid #e2e8f0;
+    cursor: pointer;
 }
 
 /* Grelha de divisão de Conteúdo Central vs Barra Direita */
@@ -324,6 +325,39 @@ a:hover {
 
 img{
     align-self: center;
+}
+
+.info-aluno{
+    background:white;
+    border-radius:16px;
+    padding:30px;
+    display:flex;
+    gap:30px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+#profile-avatar{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:#2563eb;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:3rem;
+    font-weight:bold;
+}
+
+#btn-change-password{
+    background:#f59e0b;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight: bold;
 }
 
 /* ================= COMPONENTES DA DASHBOARD (SEÇÕES E CARDS) ================= */

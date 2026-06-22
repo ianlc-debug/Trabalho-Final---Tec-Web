@@ -62,7 +62,7 @@
                 <a href="#"><i class="fa-solid fa-calendar"></i> Agenda</a>
                 <a href="#"><i class="fa-solid fa-folder"></i> Recursos</a>
                 <a href="#"><i class="fa-solid fa-comment"></i> Mensagens</a>
-                <a href="#"><i class="fa-solid fa-user"></i> User</a>
+                <a href="#" id="nav-user-btn"><i class="fa-solid fa-user"></i> Perfil</a>
                 <a href="#" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
             </nav>
         </aside>
@@ -167,6 +167,46 @@
                             </div>
                             <div id="public-groups-grid" class="groups-layout-grid"></div>
                         </section>
+                    </div>
+
+                    <div id="view-user" class="hidden">
+
+                        <section class="welcome-banner">
+                            <h1>Meu Perfil</h1>
+                            <p class="welcome-subtitle">Gerencie suas informações pessoais</p>
+                        </section>
+
+                        <div class="dashboard-section">
+
+                            <div class = "info-aluno">
+
+                                <div id="profile-avatar">
+                                    A
+                                </div>
+
+                                <div style="flex:1;">
+                                    <h2 id="profile-name">ALUNO(A)</h2>
+
+                                    <p><strong>Email:</strong></p>
+                                    <p><strong>Curso:</strong></p>
+                                    <p><strong>Semestre:</strong></p>
+                                    <p><strong>Grupos Criados:</strong> <span id="profile-groups">0</span></p>
+
+                                    <div style="margin-top:20px; display:flex; gap:10px;">
+                                        <button id="btn-edit-profile" class="btn-primary-action">
+                                            Editar Perfil
+                                        </button>
+
+                                        <button id="btn-change-password">
+                                            Alterar Senha
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                     <div id="view-group-classroom" class="hidden">

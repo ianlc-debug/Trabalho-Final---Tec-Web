@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const welcomeUserText = document.getElementById("welcome-user");
     const logoutBtn = document.getElementById("logout-btn");
 
+    const navUserBtn = document.getElementById("nav-user-btn");
+    const viewUser = document.getElementById("view-user");
+    const profilePic = document.querySelector(".profile-pic");
+
     let currentUser = "ALUNO(A)";
 
     if (document.getElementById("register-link")) {
@@ -55,8 +59,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewClassroom = document.getElementById("view-group-classroom");
 
     function resetActiveNav() {
-        navInicioBtn.classList.remove("active"); navGruposBtn.classList.remove("active");
+        navInicioBtn.classList.remove("active"); 
+        navGruposBtn.classList.remove("active");
+
+        if(navUserBtn){
+            navUserBtn.classList.remove("active");
+        }
     }
+
+    if (profilePic && navUserBtn) {
+        profilePic.addEventListener("click", () => {
+            navUserBtn.click();
+        });
+    }
+
     if (navInicioBtn && navGruposBtn) {
         navInicioBtn.addEventListener("click", (e) => {
             e.preventDefault(); resetActiveNav(); navInicioBtn.classList.add("active");
@@ -77,6 +93,31 @@ document.addEventListener("DOMContentLoaded", () => {
             viewClassroom.classList.add("hidden");
             viewInicio.classList.add("hidden");
             viewGrupos.classList.remove("hidden");
+        });
+    }
+
+    if (navUserBtn) {
+        navUserBtn.addEventListener("click", (e) => {
+
+            e.preventDefault();
+
+            resetActiveNav();
+            navUserBtn.classList.add("active");
+
+            viewInicio.classList.add("hidden");
+            viewGrupos.classList.add("hidden");
+            viewClassroom.classList.add("hidden");
+
+            viewUser.classList.remove("hidden");
+
+            document.getElementById("profile-name").textContent =
+                currentUser.toUpperCase();
+
+            document.getElementById("profile-avatar").textContent =
+                currentUser.charAt(0).toUpperCase();
+
+            document.getElementById("profile-groups").textContent =
+                Object.keys(groupMemoryDatabase).length;
         });
     }
 
