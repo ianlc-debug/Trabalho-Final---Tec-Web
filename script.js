@@ -15,6 +15,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewUser = document.getElementById("view-user");
     const profilePic = document.querySelector(".profile-pic");
 
+    const navMensagensBtn = document.getElementById("nav-mensagens-btn");
+    const viewMensagens = document.getElementById("view-mensagens");
+    const btnAddContact = document.getElementById("btn-add-contact");
+    const contactInput = document.getElementById("contact-name");
+    const contactsList = document.getElementById("contacts-list");
+
+    btnAddContact.addEventListener("click", () => {
+        const nome = contactInput.value.trim();
+
+        if (!nome) return;
+
+        const contato = document.createElement("button");
+        contato.textContent = nome;
+        contato.className = "contact-btn";
+
+        contactsList.appendChild(contato);
+
+        contactInput.value = "";
+    });
+
     let currentUser = "ALUNO(A)";
 
     if (document.getElementById("register-link")) {
@@ -41,6 +61,14 @@ document.addEventListener("DOMContentLoaded", () => {
             loginScreen.classList.add("hidden"); dashboardScreen.classList.remove("hidden");
             renderGlobalTasks();
             renderHomeSchedules();
+
+            if (welcomeUserText) {
+                welcomeUserText.textContent = `OLÁ, ${currentUser.toUpperCase()}`;
+            }
+
+            if (profilePic) {
+                profilePic.textContent = currentUser.charAt(0).toUpperCase();
+            }
         });
     }
 
@@ -65,6 +93,23 @@ document.addEventListener("DOMContentLoaded", () => {
         if(navUserBtn){
             navUserBtn.classList.remove("active");
         }
+        if (navMensagensBtn) navMensagensBtn.classList.remove("active");
+    }
+
+    if (navMensagensBtn) {
+        navMensagensBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            resetActiveNav();
+            navMensagensBtn.classList.add("active");
+
+            viewInicio.classList.add("hidden");
+            viewGrupos.classList.add("hidden");
+            viewClassroom.classList.add("hidden");
+            viewUser.classList.add("hidden");
+
+            viewMensagens.classList.remove("hidden");
+        });
     }
 
     if (profilePic && navUserBtn) {
@@ -77,10 +122,12 @@ document.addEventListener("DOMContentLoaded", () => {
         navInicioBtn.addEventListener("click", (e) => {
             e.preventDefault(); resetActiveNav(); navInicioBtn.classList.add("active");
             viewClassroom.classList.add("hidden"); viewGrupos.classList.add("hidden"); viewInicio.classList.remove("hidden");
+            viewMensagens.classList.add("hidden");
         });
         navGruposBtn.addEventListener("click", (e) => {
             e.preventDefault(); resetActiveNav(); navGruposBtn.classList.add("active");
             viewClassroom.classList.add("hidden"); viewInicio.classList.add("hidden"); viewGrupos.classList.remove("hidden");
+            viewMensagens.classList.add("hidden");
         });
     }
 
@@ -93,6 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
             viewClassroom.classList.add("hidden");
             viewInicio.classList.add("hidden");
             viewGrupos.classList.remove("hidden");
+            viewMensagens.classList.add("hidden");
         });
     }
 
@@ -107,6 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
             viewInicio.classList.add("hidden");
             viewGrupos.classList.add("hidden");
             viewClassroom.classList.add("hidden");
+            viewMensagens.classList.add("hidden");
 
             viewUser.classList.remove("hidden");
 
@@ -120,6 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 Object.keys(groupMemoryDatabase).length;
         });
     }
+
 
     // ================= BANCO DE DADOS EM MEMÓRIA SIMULADO =================
     const groupMemoryDatabase = {};
@@ -260,6 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
         viewInicio.classList.add("hidden");
         viewGrupos.classList.add("hidden");
         viewClassroom.classList.remove("hidden");
+        viewMensagens.classList.add("hidden");
         
         classroomMainWidgets.classList.remove("hidden");
         classroomMembersSection.classList.add("hidden");
@@ -439,6 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderGlobalTasks();
                 viewClassroom.classList.add("hidden");
                 viewGrupos.classList.remove("hidden");
+                viewMensagens.classList.add("hidden");
                 resetActiveNav();
                 navGruposBtn.classList.add("active");
             }
