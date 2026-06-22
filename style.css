@@ -449,7 +449,8 @@ img{
 }
 
 /* RESOLUÇÃO DO TEXTO INVISÍVEL E TAMANHO DO INPUT */
-#private-group-code-input {
+#private-group-code-input, 
+#public-group-code-input {
     flex: 1 !important;
     height: 50px !important;              /* Altura confortável garantida */
     padding: 0 16px !important;           /* Preenchimento lateral livre */
@@ -462,7 +463,8 @@ img{
     box-sizing: border-box !important;     /* Evita que paddings quebrem a altura */
 }
 
-#private-group-code-input:focus {
+#private-group-code-input:focus, 
+#public-group-code-input:focus {
     border-color: #3b82f6 !important;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
 }
@@ -642,4 +644,276 @@ img{
 
 .modal-content button[type="submit"]:hover {
     background-color: #2563eb;
+}
+
+/* Mensagem de erro ao lado do botão */
+.inline-error-msg {
+    display: flex;
+    align-items: center;
+    color: #ef4444; /* Vermelho de erro */
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-left: 10px;
+    white-space: nowrap; /* Evita que o texto quebre em duas linhas */
+    animation: fadeInError 0.2s ease-in-out forwards;
+}
+
+/* Cards dinâmicos clicáveis */
+.custom-group-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.custom-group-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    filter: brightness(0.97);
+}
+
+/* Caixa das mensagens salvas no Mural */
+.mural-post-card {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.mural-post-card p {
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.mural-post-btn-edit {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.mural-post-btn-edit:hover {
+    text-decoration: underline;
+}
+
+/* Customizações para o Classroom */
+.classroom-card-box {
+    background: white; 
+    border: 1px solid #e2e8f0; 
+    padding: 25px; 
+    border-radius: 16px;
+}
+
+.classroom-section-title {
+    font-weight: 700; 
+    font-size: 1rem; 
+    color: #1e293b; 
+    display: block; 
+    margin-bottom: 12px;
+}
+
+.btn-primary-action {
+    background-color: #3b82f6; 
+    color: white; 
+    border: none; 
+    padding: 0 20px; 
+    height: 42px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: background 0.2s;
+}
+
+.btn-primary-action:hover {
+    background-color: #2563eb;
+}
+
+/* Chips de Horários Vinculados */
+.schedule-chip {
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-remove-chip {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Cards dinâmicos clicáveis */
+.custom-group-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.custom-group-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    filter: brightness(0.97);
+}
+
+/* Caixa das mensagens/atividades salvas no Mural */
+.mural-post-card {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.mural-post-meta {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.mural-post-card p {
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.mural-post-btn-edit {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.mural-post-btn-edit:hover {
+    text-decoration: underline;
+}
+
+/* Correção visual do botão logout */
+.menu #logout-btn {
+    background-color: transparent;
+    color: #64748b;
+    border-radius: 8px;
+}
+.menu #logout-btn:hover {
+    background-color: #fef2f2;
+    color: #ef4444;
+}
+
+/* Layout flex para alinhar os botões de edição e exclusão nas caixas */
+.mural-card-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.mural-post-btn-delete {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.mural-post-btn-delete:hover {
+    text-decoration: underline;
+}
+
+/* Estado visual de uma tarefa concluída */
+.task-completed-text {
+    text-decoration: line-through !important;
+    color: #94a3b8 !important;
+    opacity: 0.7;
+}
+
+/* Pequeno card de exibição na barra de Tarefas Globais */
+.global-task-item {
+    background: #f8fafc;
+    border-left: 4px solid #3b82f6;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    border-top: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.global-task-item small {
+    display: block;
+    color: #64748b;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+/* Container das sugestões - Flutua sobre o conteúdo */
+.search-suggestions-box {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 6px;
+    box-sizing: border-box;
+}
+
+/* Cada caixinha de opção de grupo */
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #f8fafc;
+    margin-bottom: 4px;
+    transition: background-color 0.15s ease;
+}
+
+.suggestion-item:last-child {
+    margin-bottom: 0;
+}
+
+.suggestion-item:hover {
+    background-color: #e2e8f0;
+}
+
+.suggestion-icon {
+    font-size: 1.1rem;
+}
+
+.suggestion-info strong {
+    display: block;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.suggestion-info small {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+/* Classe utilitária para esconder */
+.search-suggestions-box.hidden {
+    display: none !important;
 }

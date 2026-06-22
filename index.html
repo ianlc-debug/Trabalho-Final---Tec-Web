@@ -52,6 +52,7 @@
     </div>
 
     <div id="dashboard-screen" class="dashboard-container hidden">
+        
         <aside class="sidebar">
             <img src="assets/logo.png" alt="Logo Estudo + Juntos" class="sidebar-logo">
             <p class="sidebar-subtitle">Plataforma de grupo de estudos universitários</p>
@@ -67,11 +68,15 @@
         </aside>
 
         <div class="main-layout">
+            
             <header class="top-bar">
-                <div>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Pesquisar grupos, matérias..." class="search-bar">
+                <div class="search-container" style="position: relative; flex: 1; max-width: 400px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #64748b;"></i>
+                    <input type="text" placeholder="Pesquisar grupos, matérias..." class="search-bar" style="width: 100%; padding-left: 38px; box-sizing: border-box;">
+                    
+                    <div id="search-suggestions" class="search-suggestions-box hidden"></div>
                 </div>
+                
                 <div class="profile-area">
                     <span class="notification-icon"><i class="fa-solid fa-bell"></i></span>
                     <div class="profile-pic"></div>
@@ -79,6 +84,7 @@
             </header>
 
             <div class="content-grid">
+                
                 <main class="main-content">
                     
                     <div id="view-inicio">
@@ -130,13 +136,14 @@
                             <div class="private-code-container">
                                 <p class="code-instruction">Digite o código de um grupo privado para solicitar a entrada:</p>
                                 <form id="join-private-group-form" class="code-input-container">
-                                    <input type="text" id="private-group-code-input" placeholder="Ex: MAT-105" required>
-                                    <button type="submit" class="btn-join">Ingressar no Grupo</button>
+                                    <input type="text" id="private-group-code-input" placeholder="Código do Grupo Privado" required>
+                                    <button type="submit" class="btn-join">Solicitar Acesso</button>
+                                    <span id="private-group-error-msg" class="inline-error-msg"></span>
                                 </form>
                             </div>
 
                             <div id="empty-private-groups-state" class="empty-state-box">
-                                <p>Você não está em nenhum grupo privado no momento.</p>
+                                <p>Você não possui solicitações para grupos privados no momento.</p>
                             </div>
                             <div id="private-groups-grid" class="groups-layout-grid"></div>
                         </section>
@@ -145,19 +152,146 @@
                             <div class="section-header">
                                 <h2>Grupos Abertos</h2>
                             </div>
-                            <div class="empty-state-box">
-                                <p>Nenhum grupo aberto cadastrado no momento.</p>
+
+                            <div class="private-code-container">
+                                <p class="code-instruction">Digite o código de um grupo aberto para entrar imediatamente:</p>
+                                <form id="join-public-group-form" class="code-input-container">
+                                    <input type="text" id="public-group-code-input" placeholder="Código do Grupo Aberto" required>
+                                    <button type="submit" class="btn-join" style="background-color: #2563eb;">Ingressar no Grupo</button>
+                                    <span id="public-group-error-msg" class="inline-error-msg"></span>
+                                </form>
+                            </div>
+
+                            <div id="empty-public-groups-state" class="empty-state-box">
+                                <p>Nenhum grupo aberto ingressado no momento.</p>
+                            </div>
+                            <div id="public-groups-grid" class="groups-layout-grid"></div>
+                        </section>
+                    </div>
+
+                    <div id="view-group-classroom" class="hidden">
+                        <button id="btn-back-to-groups" style="background: none; border: none; color: #64748b; font-weight: 600; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar para Grupos
+                        </button>
+
+                        <section class="welcome-banner" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); margin-bottom: 25px; padding: 30px; border-radius: 16px; position: relative;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+                                <div>
+                                    <h1 id="classroom-group-name" style="margin-bottom: 5px;">Nome do Grupo</h1>
+                                    <p id="classroom-group-subject" class="welcome-subtitle" style="margin-bottom: 15px;">Matéria</p>
+                                    
+                                    <div style="font-size: 0.9rem; opacity: 0.9; display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px;">
+                                        <p><i class="fa-solid fa-user" style="width: 20px;"></i> <strong>Criador:</strong> Você</p>
+                                        <p><i class="fa-solid fa-lock" style="width: 20px;"></i> <strong>Tipo:</strong> <span id="classroom-group-type"></span></p>
+                                        <p><i class="fa-solid fa-key" style="width: 20px;"></i> <strong>Código do Grupo:</strong> <span id="classroom-group-code" style="font-family: monospace; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px; font-weight: bold; letter-spacing: 1px;">000000</span></p>
+                                    </div>
+
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <button id="btn-invite-member-modal" style="background-color: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                                            <i class="fa-solid fa-user-plus"></i> Convidar Membro
+                                        </button>
+                                        <button id="btn-delete-group" style="background-color: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                                            <i class="fa-solid fa-trash-can"></i> Excluir Grupo
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 12px; min-width: 280px; backdrop-filter: blur(4px);">
+                                    <h4 style="color: white; margin-bottom: 10px; font-size: 0.95rem;"><i class="fa-solid fa-clock"></i> Horários das Reuniões:</h4>
+                                    <div id="classroom-banner-schedules" style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 15px; display: flex; flex-direction: column; gap: 4px;"></div>
+                                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 12px;">
+                                    <button id="btn-view-members" style="width: 100%; background: white; color: #1e293b; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <i class="fa-solid fa-users"></i> Ver Participantes (<span id="classroom-member-count">1</span>)
+                                    </button>
+                                </div>
                             </div>
                         </section>
+
+                        <div id="classroom-main-widgets" style="display: flex; flex-direction: column; gap: 25px;">
+                            
+                            <div class="classroom-card-box">
+                                <label class="classroom-section-title">🗓️ Vincular Novos Horários Semanais</label>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                                    <select id="classroom-day-select" style="flex: 1; min-width: 150px; height: 42px; padding: 0 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: white;">
+                                        <option value="" disabled selected>Dia da Semana</option>
+                                        <option value="Domingo">Domingo</option>
+                                        <option value="Segunda-feira">Segunda-feira</option>
+                                        <option value="Terça-feira">Terça-feira</option>
+                                        <option value="Quarta-feira">Quarta-feira</option>
+                                        <option value="Quinta-feira">Quinta-feira</option>
+                                        <option value="Sexta-feira">Sexta-feira</option>
+                                        <option value="Sábado">Sábado</option>
+                                    </select>
+                                    <select id="classroom-time-select" style="flex: 1; min-width: 150px; height: 42px; padding: 0 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: white;">
+                                        <option value="" disabled selected>Horário</option>
+                                        <option value="08-10">08:00 às 10:00</option>
+                                        <option value="10-12">10:00 às 12:00</option>
+                                        <option value="14-16">14:00 às 16:00</option>
+                                        <option value="16-18">16:00 às 18:00</option>
+                                        <option value="18-20">18:00 às 20:00</option>
+                                        <option value="20-22">20:00 às 22:00</option>
+                                    </select>
+                                    <button id="btn-add-schedule" class="btn-primary-action">Vincular Horário</button>
+                                </div>
+                                <div id="classroom-schedule-list" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                            </div>
+
+                            <div class="classroom-card-box">
+                                <label class="classroom-section-title">📌 Quadro de Atividades da Equipe</label>
+                                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                                    <input type="text" id="classroom-task-input" placeholder="Título ou descrição da nova atividade..." style="width: 100%; height: 42px; padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none;">
+                                    
+                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                        <button type="button" id="btn-mock-upload" style="background: #f1f5f9; border: 1px dashed #cbd5e1; padding: 10px 16px; border-radius: 8px; color: #475569; font-weight: 600; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                            <i class="fa-solid fa-paperclip"></i> Anexar Arquivo (PDF, PNG, etc.)
+                                        </button>
+                                        <button id="btn-post-task" class="btn-primary-action">Cadastrar Atividade</button>
+                                    </div>
+                                </div>
+                                <div id="classroom-tasks-list-feed" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                            </div>
+
+                            <div class="classroom-card-box">
+                                <label class="classroom-section-title">💬 Mural do Grupo</label>
+                                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                                    <textarea id="classroom-message-textarea" rows="3" placeholder="Escreva um comunicado para o grupo..." style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; resize: none; outline: none; font-family: inherit;"></textarea>
+                                    <button id="btn-post-message" class="btn-primary-action" style="align-self: flex-end;">Publicar no Mural</button>
+                                </div>
+                                <div id="classroom-messages-feed" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                            </div>
+                        </div>
+
+                        <div id="classroom-members-section" class="hidden classroom-card-box">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <label class="classroom-section-title" style="margin: 0;">👥 Integrantes do Grupo</label>
+                                <button id="btn-close-members" style="background: #f1f5f9; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; color: #475569;">Voltar para o Mural</button>
+                            </div>
+                            <div id="classroom-members-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                        </div>
+
+                        <div id="classroom-invite-section" class="hidden classroom-card-box" style="margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <label class="classroom-section-title" style="margin: 0;">✉️ Convidar Usuário para o Grupo</label>
+                                <button id="btn-close-invite" style="background: #f1f5f9; border: none; padding: 4px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; color: #475569;">Cancelar</button>
+                            </div>
+                            <form id="group-invite-form" style="display: flex; flex-direction: column; gap: 12px;">
+                                <input type="text" id="invite-username" placeholder="Nome de Usuário do Convidado" style="width: 100%; height: 42px; padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 8px;" required>
+                                <input type="email" id="invite-email" placeholder="E-mail do Convidado" style="width: 100%; height: 42px; padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 8px;" required>
+                                <button type="submit" class="btn-primary-action" style="align-self: flex-end;">Enviar Convite Oficial</button>
+                            </form>
+                        </div>
+
                     </div>
 
                 </main>
 
                 <aside class="right-bar">
                     <div class="right-card tasks-card">
-                        <h3>Tarefas</h3>
-                        <div class="empty-tasks">
-                            <p>Você ainda não possui tarefas registradas.</p>
+                        <h3>Tarefas Globais</h3>
+                        <div id="global-tasks-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                            <div class="empty-tasks" style="padding: 5px 0;">
+                                <p style="color: #64748b; font-size: 0.9rem;">Nenhuma tarefa pendente</p>
+                            </div>
                         </div>
                     </div>
                     <div class="right-card create-group-card">
@@ -169,8 +303,6 @@
             </div>
         </div>
     </div>
-
-    <script src="script.js"></script>
 
     <div id="create-group-modal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -188,5 +320,7 @@
             </form>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
