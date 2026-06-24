@@ -20,32 +20,53 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnAddContact = document.getElementById("btn-add-contact");
     const contactsList = document.getElementById("contacts-list");
 
-    const navAgendaBtn = document.getElementById("nav-agenda-btn"); // mude para o ID correto do seu botão
-    const viewAgenda = document.getElementById("view-agenda"); // ID da div que criamos acima
+    const navAgendaBtn = document.getElementById("nav-agenda-btn");
+    const viewAgenda = document.getElementById("view-agenda");
     const monthSelect = document.getElementById("agenda-month-select");
-    const daysGrid = document.getElementById("calendar-days-grid"); 
+    const daysGrid = document.getElementById("calendar-days-grid");
+
+    // SELETORES DO NOVO MODAL DA AGENDA
+    const agendaDayModal = document.getElementById("agenda-day-modal");
+    const closeAgendaModalBtn = document.getElementById("close-agenda-modal-btn");
+    const agendaModalDateTitle = document.getElementById("agenda-modal-date-title");
+    const agendaModalEventsList = document.getElementById("agenda-modal-events-list");
+    const agendaModalForm = document.getElementById("agenda-modal-form");
+    const agendaModalInputTitle = document.getElementById("agenda-modal-input-title");
+
+    // Variáveis auxiliares para guardar qual dia está sendo editado no Modal aberto
+    let selectedDayContext = null;
+    let selectedMonthContext = null;
+    let selectedYearContext = null;
 
     if (btnAddContact) {
-    btnAddContact.addEventListener("click", () => {
-        if (contactInput) contactInput.value = "";
-    });
-}
+        btnAddContact.addEventListener("click", () => {
+            const contactInput = document.getElementById("contact-input");
+            if (contactInput) contactInput.value = "";
+        });
+    }
 
     let currentUser = "ALUNO(A)";
 
     if (document.getElementById("register-link")) {
         document.getElementById("register-link").addEventListener("click", (e) => {
-            e.preventDefault(); loginScreen.classList.add("hidden"); signupScreen.classList.remove("hidden");
+            e.preventDefault(); 
+            loginScreen.classList.add("hidden"); 
+            signupScreen.classList.remove("hidden");
         });
     }
     if (document.getElementById("forgot-password-link")) {
         document.getElementById("forgot-password-link").addEventListener("click", (e) => {
-            e.preventDefault(); loginScreen.classList.add("hidden"); forgotScreen.classList.remove("hidden");
+            e.preventDefault(); 
+            loginScreen.classList.add("hidden"); 
+            forgotScreen.classList.remove("hidden");
         });
     }
     document.querySelectorAll(".back-to-login").forEach(btn => {
         btn.addEventListener("click", (e) => {
-            e.preventDefault(); signupScreen.classList.add("hidden"); forgotScreen.classList.add("hidden"); loginScreen.classList.remove("hidden");
+            e.preventDefault(); 
+            signupScreen.classList.add("hidden"); 
+            forgotScreen.classList.add("hidden"); 
+            loginScreen.classList.remove("hidden");
         });
     });
 
@@ -54,122 +75,104 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             currentUser = usernameInput.value.trim() || "ALUNO(A)";
             if (welcomeUserText) welcomeUserText.textContent = `OLÁ, ${currentUser.toUpperCase()}`;
-            loginScreen.classList.add("hidden"); dashboardScreen.classList.remove("hidden");
-            renderGlobalTasks();
-            renderHomeSchedules();
-
-            if (welcomeUserText) {
-                welcomeUserText.textContent = `OLÁ, ${currentUser.toUpperCase()}`;
-            }
-
+            loginScreen.classList.add("hidden"); 
+            dashboardScreen.classList.remove("hidden");
+            
             if (profilePic) {
                 profilePic.textContent = currentUser.charAt(0).toUpperCase();
             }
+            renderGlobalTasks();
+            renderHomeSchedules();
         });
     }
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault(); dashboardScreen.classList.add("hidden"); loginScreen.classList.remove("hidden");
+            e.preventDefault(); 
+            dashboardScreen.classList.add("hidden"); 
+            loginScreen.classList.remove("hidden");
             if (loginForm) loginForm.reset();
         });
     }
 
-    // ================= NAVEGAÇÃO INTERNA CORRIGIDA =================
-const navInicioBtn = document.getElementById("nav-inicio-btn");
-const navGruposBtn = document.getElementById("nav-grupos-btn");
-const viewInicio = document.getElementById("view-inicio");
-const viewGrupos = document.getElementById("view-grupos");
-const viewClassroom = document.getElementById("view-group-classroom");
+    // ================= NAVEGAÇÃO INTERNA =================
+    const navInicioBtn = document.getElementById("nav-inicio-btn");
+    const navGruposBtn = document.getElementById("nav-grupos-btn");
+    const viewInicio = document.getElementById("view-inicio");
+    const viewGrupos = document.getElementById("view-grupos");
+    const viewClassroom = document.getElementById("view-group-classroom");
 
-function resetActiveNav() {
-    // 1. Remove a classe ativa de ABSOLUTAMENTE todos os botões do menu
-    if (navInicioBtn) navInicioBtn.classList.remove("active"); 
-    if (navGruposBtn) navGruposBtn.classList.remove("active");
-    if (navMensagensBtn) navMensagensBtn.classList.remove("active");
-    if (navUserBtn) navUserBtn.classList.remove("active");
-    if (navAgendaBtn) navAgendaBtn.classList.remove("active");
+    function resetActiveNav() {
+        if (navInicioBtn) navInicioBtn.classList.remove("active");
+        if (navGruposBtn) navGruposBtn.classList.remove("active");
+        if (navMensagensBtn) navMensagensBtn.classList.remove("active");
+        if (navUserBtn) navUserBtn.classList.remove("active");
+        if (navAgendaBtn) navAgendaBtn.classList.remove("active");
 
-    // 2. Esconde todas as telas do painel central
-    if (viewInicio) viewInicio.classList.add("hidden");
-    if (viewGrupos) viewGrupos.classList.add("hidden");
-    if (viewClassroom) viewClassroom.classList.add("hidden");
-    if (viewMensagens) viewMensagens.classList.add("hidden");
-    if (viewUser) viewUser.classList.add("hidden");
-    if (viewAgenda) viewAgenda.classList.add("hidden");
-}
+        if (viewInicio) viewInicio.classList.add("hidden");
+        if (viewGrupos) viewGrupos.classList.add("hidden");
+        if (viewClassroom) viewClassroom.classList.add("hidden");
+        if (viewMensagens) viewMensagens.classList.add("hidden");
+        if (viewUser) viewUser.classList.add("hidden");
+        if (viewAgenda) viewAgenda.classList.add("hidden");
+    }
 
-// Clique no botão Início
-if (navInicioBtn) {
-    navInicioBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        resetActiveNav(); 
-        navInicioBtn.classList.add("active"); // Destaca APENAS o início
-        if (viewInicio) viewInicio.classList.remove("hidden");
-    });
-}
+    if (navInicioBtn) {
+        navInicioBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav(); 
+            navInicioBtn.classList.add("active");
+            if (viewInicio) viewInicio.classList.remove("hidden");
+        });
+    }
 
-// Clique no botão Grupos
-if (navGruposBtn) {
-    navGruposBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        resetActiveNav();
-        navGruposBtn.classList.add("active"); // Destaca APENAS grupos
-        if (viewGrupos) viewGrupos.classList.remove("hidden");
-    });
-}
+    if (navGruposBtn) {
+        navGruposBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav();
+            navGruposBtn.classList.add("active");
+            if (viewGrupos) viewGrupos.classList.remove("hidden");
+        });
+    }
 
-// Clique no botão Mensagens
-if (navMensagensBtn) {
-    navMensagensBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        resetActiveNav();
-        navMensagensBtn.classList.add("active"); // Destaca APENAS mensagens
-        if (viewMensagens) viewMensagens.classList.remove("hidden");
-    });
-}
+    if (navMensagensBtn) {
+        navMensagensBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav();
+            navMensagensBtn.classList.add("active");
+            if (viewMensagens) viewMensagens.classList.remove("hidden");
+        });
+    }
 
-// Clique no botão Perfil
-if (navUserBtn) {
-    navUserBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        resetActiveNav();
-        navUserBtn.classList.add("active"); // Destaca APENAS o perfil
-        if (viewUser) viewUser.classList.remove("hidden");
+    if (navUserBtn) {
+        navUserBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav();
+            navUserBtn.classList.add("active");
+            if (viewUser) viewUser.classList.remove("hidden");
 
-        // Atualizações dos dados do perfil (Código anterior)
-        if (document.getElementById("profile-name")) {
-            document.getElementById("profile-name").textContent = currentUser.toUpperCase();
-        }
-        if (document.getElementById("profile-avatar")) {
-            document.getElementById("profile-avatar").textContent = currentUser.charAt(0).toUpperCase();
-        }
-        const totalGroupsCount = Object.keys(groupMemoryDatabase).length;
-        if (document.getElementById("profile-groups-joined")) {
-            document.getElementById("profile-groups-joined").textContent = totalGroupsCount;
-        }
-        if (document.getElementById("profile-groups-created")) {
-            document.getElementById("profile-groups-created").textContent = totalGroupsCount;
-        }
-    });
-}
+            if (document.getElementById("profile-name")) {
+                document.getElementById("profile-name").textContent = currentUser.toUpperCase();
+            }
+            if (document.getElementById("profile-avatar")) {
+                document.getElementById("profile-avatar").textContent = currentUser.charAt(0).toUpperCase();
+            }
+            const totalGroupsCount = Object.keys(groupMemoryDatabase).length;
+            if (document.getElementById("profile-groups-joined")) {
+                document.getElementById("profile-groups-joined").textContent = totalGroupsCount;
+            }
+            if (document.getElementById("profile-groups-created")) {
+                document.getElementById("profile-groups-created").textContent = totalGroupsCount;
+            }
+            if (document.getElementById("profile-groups")) {
+                document.getElementById("profile-groups").textContent = totalGroupsCount;
+            }
+        });
+    }
 
     if (profilePic && navUserBtn) {
         profilePic.addEventListener("click", () => {
             navUserBtn.click();
-        });
-    }
-
-    if (navInicioBtn && navGruposBtn) {
-        navInicioBtn.addEventListener("click", (e) => {
-            e.preventDefault(); resetActiveNav(); navInicioBtn.classList.add("active");
-            viewClassroom.classList.add("hidden"); viewGrupos.classList.add("hidden"); viewInicio.classList.remove("hidden");
-            viewMensagens.classList.add("hidden");
-        });
-        navGruposBtn.addEventListener("click", (e) => {
-            e.preventDefault(); resetActiveNav(); navGruposBtn.classList.add("active");
-            viewClassroom.classList.add("hidden"); viewInicio.classList.add("hidden"); viewGrupos.classList.remove("hidden");
-            viewMensagens.classList.add("hidden");
         });
     }
 
@@ -179,44 +182,13 @@ if (navUserBtn) {
             e.preventDefault();
             resetActiveNav();
             if (navGruposBtn) navGruposBtn.classList.add("active");
-            viewClassroom.classList.add("hidden");
-            viewInicio.classList.add("hidden");
-            viewGrupos.classList.remove("hidden");
-            viewMensagens.classList.add("hidden");
-            if (viewUser) viewUser.classList.add("hidden");
+            if (viewGrupos) viewGrupos.classList.remove("hidden");
         });
     }
 
-    if (navUserBtn) {
-        navUserBtn.addEventListener("click", (e) => {
-
-            e.preventDefault();
-
-            resetActiveNav();
-            navUserBtn.classList.add("active");
-
-            viewInicio.classList.add("hidden");
-            viewGrupos.classList.add("hidden");
-            viewClassroom.classList.add("hidden");
-            viewMensagens.classList.add("hidden");
-            if (viewUser) viewUser.classList.add("hidden");
-
-            viewUser.classList.remove("hidden");
-
-            document.getElementById("profile-name").textContent =
-                currentUser.toUpperCase();
-
-            document.getElementById("profile-avatar").textContent =
-                currentUser.charAt(0).toUpperCase();
-
-            document.getElementById("profile-groups").textContent =
-                Object.keys(groupMemoryDatabase).length;
-        });
-    }
-
-
-    // ================= BANCO DE DADOS EM MEMÓRIA SIMULADO =================
+    // ================= BANCOS DE DADOS EM MEMÓRIA SIMULADOS =================
     const groupMemoryDatabase = {};
+    let globalEventsDatabase = []; // Mudado para 'let' para permitir reatribuição na filtragem de remoção
 
     const createGroupBtn = document.querySelector(".btn-create");
     const modalOverlay = document.getElementById("create-group-modal");
@@ -233,8 +205,7 @@ if (navUserBtn) {
     const classroomBannerSchedules = document.getElementById("classroom-banner-schedules");
     const classroomMemberCount = document.getElementById("classroom-member-count");
     const btnDeleteGroup = document.getElementById("btn-delete-group");
-    
-    // Seções e Botões de Membros / Convites
+
     const btnViewMembers = document.getElementById("btn-view-members");
     const btnCloseMembers = document.getElementById("btn-close-members");
     const btnInviteMemberModal = document.getElementById("btn-invite-member-modal");
@@ -255,7 +226,6 @@ if (navUserBtn) {
     const btnPostTask = document.getElementById("btn-post-task");
     const tasksFeed = document.getElementById("classroom-tasks-list-feed");
     const btnMockUpload = document.getElementById("btn-mock-upload");
-
     const textareaMessage = document.getElementById("classroom-message-textarea");
     const btnPostMessage = document.getElementById("btn-post-message");
     const messagesFeed = document.getElementById("classroom-messages-feed");
@@ -264,7 +234,6 @@ if (navUserBtn) {
     let totalGroupsCreated = 0;
     const cardColors = ["#e3f6e6", "#fde3ed", "#fce9b7", "#e3f1fd"];
 
-    // Clique comportamental para anexar arquivos
     if (btnMockUpload) {
         btnMockUpload.addEventListener("click", () => {
             btnMockUpload.style.opacity = "0.7";
@@ -274,7 +243,7 @@ if (navUserBtn) {
 
     if (createGroupBtn) createGroupBtn.addEventListener("click", () => modalOverlay.classList.remove("hidden"));
     if (closeModalBtn) closeModalBtn.addEventListener("click", () => modalOverlay.classList.add("hidden"));
-
+    
     if (createGroupForm) {
         createGroupForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -282,7 +251,7 @@ if (navUserBtn) {
             const groupSubject = createGroupForm.querySelectorAll("input")[1].value.trim();
             const privacyValue = createGroupForm.querySelector("select").value;
             const privacyText = privacyValue === "privado" ? "Apenas convidados" : "Aberto para todos";
-            
+      
             const uniqueId = `group-${Date.now()}`;
             const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -328,7 +297,7 @@ if (navUserBtn) {
             const gData = groupMemoryDatabase[key];
             const currentCardColor = cardColors[idx % cardColors.length];
             const cardHTML = `
-                <div class="custom-group-card" id="${gData.id}" style="background-color: ${currentCardColor};">
+                <div class="custom-group-card" id="${gData.id}" style="background-color: ${currentCardColor}; cursor: pointer;">
                     <div class="group-card-icon-circle">📖</div>
                     <h4>${gData.name}</h4>
                     <p>${gData.subject}</p>
@@ -343,7 +312,6 @@ if (navUserBtn) {
                 card.addEventListener("click", () => abrirClassroom(key));
             });
         });
-
         renderHomeSchedules();
     }
 
@@ -351,24 +319,24 @@ if (navUserBtn) {
         currentEditingGroupId = groupId;
         const gData = groupMemoryDatabase[groupId];
 
-        viewInicio.classList.add("hidden");
-        viewGrupos.classList.add("hidden");
-        viewClassroom.classList.remove("hidden");
-        viewMensagens.classList.add("hidden");
+        resetActiveNav();
+        if (viewClassroom) viewClassroom.classList.remove("hidden");
         
-        classroomMainWidgets.classList.remove("hidden");
-        classroomMembersSection.classList.add("hidden");
-        classroomInviteSection.classList.add("hidden");
+        if (classroomMainWidgets) classroomMainWidgets.classList.remove("hidden");
+        if (classroomMembersSection) classroomMembersSection.classList.add("hidden");
+        if (classroomInviteSection) classroomInviteSection.classList.add("hidden");
 
-        classroomGroupName.textContent = gData.name;
-        classroomGroupSubject.textContent = gData.subject;
-        classroomGroupType.textContent = gData.privacy;
-        classroomGroupCode.textContent = gData.code;
+        if (classroomGroupName) classroomGroupName.textContent = gData.name;
+        if (classroomGroupSubject) classroomGroupSubject.textContent = gData.subject;
+        if (classroomGroupType) classroomGroupType.textContent = gData.privacy;
+        if (classroomGroupCode) classroomGroupCode.textContent = gData.code;
 
-        textareaMessage.value = "";
-        inputTask.value = "";
-        btnPostTask.removeAttribute("data-edit-index");
-        btnPostTask.textContent = "Cadastrar Atividade";
+        if (textareaMessage) textareaMessage.value = "";
+        if (inputTask) inputTask.value = "";
+        if (btnPostTask) {
+            btnPostTask.removeAttribute("data-edit-index");
+            btnPostTask.textContent = "Cadastrar Atividade";
+        }
 
         updateMemberCountDisplay();
         renderSchedules();
@@ -377,12 +345,13 @@ if (navUserBtn) {
     }
 
     function updateMemberCountDisplay() {
+        if (!currentEditingGroupId) return;
         const gData = groupMemoryDatabase[currentEditingGroupId];
         const totalMembers = 1 + gData.invitedMembers.length;
-        classroomMemberCount.textContent = totalMembers;
+        if (classroomMemberCount) classroomMemberCount.textContent = totalMembers;
     }
 
-    // ================= BARRA DE PESQUISA COM SUGESTÕES FLUTUANTES (LETRA A LETRA) =================
+    // ================= BARRA DE PESQUISA COM SUGESTÕES FLUTUANTES =================
     const searchBar = document.querySelector(".search-bar");
     const suggestionsBox = document.getElementById("search-suggestions");
 
@@ -407,6 +376,7 @@ if (navUserBtn) {
                 matchedGroups.forEach(group => {
                     const item = document.createElement("div");
                     item.className = "suggestion-item";
+                    item.style.cursor = "pointer";
                     item.innerHTML = `
                         <span class="suggestion-icon">📖</span>
                         <div class="suggestion-info">
@@ -414,13 +384,11 @@ if (navUserBtn) {
                             <small>${group.subject} • ${group.privacy}</small>
                         </div>
                     `;
-
                     item.addEventListener("click", () => {
                         abrirClassroom(group.id);
                         searchBar.value = ""; 
                         suggestionsBox.classList.add("hidden");
                     });
-
                     suggestionsBox.appendChild(item);
                 });
             } else {
@@ -440,7 +408,7 @@ if (navUserBtn) {
         });
     }
 
-    // ================= SELEÇÃO E INGRESSO DE GRUPOS (PRIVADOS E ABERTOS) =================
+    // ================= INGRESSO DE GRUPOS =================
     const joinPrivateForm = document.getElementById("join-private-group-form");
     const privateCodeInput = document.getElementById("private-group-code-input");
     const privateErrorMsg = document.getElementById("private-group-error-msg");
@@ -492,17 +460,18 @@ if (navUserBtn) {
         });
     }
 
-    // ================= CONTROLE DE CONVITES =================
+    // ================= CONTROLE DE CONVITES E EXCLUSÃO =================
     if (btnInviteMemberModal) {
         btnInviteMemberModal.addEventListener("click", () => {
-            classroomInviteSection.classList.remove("hidden");
-            document.getElementById("invite-username").focus();
+            if (classroomInviteSection) classroomInviteSection.classList.remove("hidden");
+            const inviteUsername = document.getElementById("invite-username");
+            if (inviteUsername) inviteUsername.focus();
         });
     }
     if (btnCloseInvite) {
         btnCloseInvite.addEventListener("click", () => {
-            classroomInviteSection.classList.add("hidden");
-            groupInviteForm.reset();
+            if (classroomInviteSection) classroomInviteSection.classList.add("hidden");
+            if (groupInviteForm) groupInviteForm.reset();
         });
     }
     if (groupInviteForm) {
@@ -515,37 +484,35 @@ if (navUserBtn) {
             currentGroup.invitedMembers.push({ name: inputName, email: inputEmail });
             
             groupInviteForm.reset();
-            classroomInviteSection.classList.add("hidden");
+            if (classroomInviteSection) classroomInviteSection.classList.add("hidden");
             updateMemberCountDisplay();
 
-            if (!classroomMembersSection.classList.contains("hidden")) {
+            if (classroomMembersSection && !classroomMembersSection.classList.contains("hidden")) {
                 btnViewMembers.click();
             }
         });
     }
 
-    // Excluir Grupo
     if (btnDeleteGroup) {
         btnDeleteGroup.addEventListener("click", () => {
+            if (!currentEditingGroupId) return;
             if (confirm(`Tem certeza que deseja excluir o grupo "${groupMemoryDatabase[currentEditingGroupId].name}"?`)) {
                 delete groupMemoryDatabase[currentEditingGroupId];
                 currentEditingGroupId = null;
                 rebuildGridsHTML();
                 renderGlobalTasks();
-                viewClassroom.classList.add("hidden");
-                viewGrupos.classList.remove("hidden");
-                viewMensagens.classList.add("hidden");
                 resetActiveNav();
-                navGruposBtn.classList.add("active");
+                if (navGruposBtn) navGruposBtn.classList.add("active");
+                if (viewGrupos) viewGrupos.classList.remove("hidden");
             }
         });
     }
 
-    // Alternar Visualização de Integrantes
+    // ================= VISUALIZAÇÃO DE INTEGRANTES =================
     if (btnViewMembers) {
         btnViewMembers.addEventListener("click", () => {
-            classroomMainWidgets.classList.add("hidden");
-            classroomMembersSection.classList.remove("hidden");
+            if (classroomMainWidgets) classroomMainWidgets.classList.add("hidden");
+            if (classroomMembersSection) classroomMembersSection.classList.remove("hidden");
             
             const gData = groupMemoryDatabase[currentEditingGroupId];
             
@@ -563,7 +530,7 @@ if (navUserBtn) {
 
             gData.invitedMembers.forEach(member => {
                 listHTML += `
-                    <div style="display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 8px;">
                         <div style="width: 36px; height: 36px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem;">
                             ${member.name.charAt(0).toUpperCase()}
                         </div>
@@ -576,18 +543,18 @@ if (navUserBtn) {
                 `;
             });
 
-            classroomMembersList.innerHTML = listHTML;
+            if (classroomMembersList) classroomMembersList.innerHTML = listHTML;
         });
     }
 
     if (btnCloseMembers) {
         btnCloseMembers.addEventListener("click", () => {
-            classroomMembersSection.classList.add("hidden");
-            classroomMainWidgets.classList.remove("hidden");
+            if (classroomMembersSection) classroomMembersSection.classList.add("hidden");
+            if (classroomMainWidgets) classroomMainWidgets.classList.remove("hidden");
         });
     }
 
-    // ================= GERENCIADOR DE REUNIÕES (FORMATADO) =================
+    // ================= GERENCIADOR DE REUNIÕES DA SESSÃO =================
     if (btnAddSchedule) {
         btnAddSchedule.addEventListener("click", () => {
             const day = selectDay.value;
@@ -599,7 +566,6 @@ if (navUserBtn) {
 
             const record = `${day} às ${formattedTime}`;
             const currentList = groupMemoryDatabase[currentEditingGroupId].schedules;
-
             if (currentList.includes(record)) return alert("Esse horário já está vinculado ao grupo!");
 
             currentList.push(record);
@@ -608,6 +574,7 @@ if (navUserBtn) {
     }
 
     function renderSchedules() {
+        if (!scheduleListElement || !classroomBannerSchedules) return;
         scheduleListElement.innerHTML = "";
         classroomBannerSchedules.innerHTML = "";
         const list = groupMemoryDatabase[currentEditingGroupId].schedules;
@@ -623,14 +590,13 @@ if (navUserBtn) {
 
             const chip = document.createElement("div");
             chip.className = "schedule-chip";
-            chip.innerHTML = `${item} <button class="btn-remove-chip">&times;</button>`;
+            chip.innerHTML = `${item} <button class="btn-remove-chip" style="background:none; border:none; margin-left:5px; cursor:pointer;">&times;</button>`;
             chip.querySelector(".btn-remove-chip").addEventListener("click", () => {
                 list.splice(index, 1);
                 renderSchedules();
             });
             scheduleListElement.appendChild(chip);
         });
-
         renderHomeSchedules();
     }
 
@@ -641,7 +607,7 @@ if (navUserBtn) {
 
         const sectionHeader = homeSessionsContainer.querySelector(".section-header");
         homeSessionsContainer.innerHTML = "";
-        homeSessionsContainer.appendChild(sectionHeader);
+        if (sectionHeader) homeSessionsContainer.appendChild(sectionHeader);
 
         let hasSchedules = false;
         const listContainer = document.createElement("div");
@@ -726,6 +692,7 @@ if (navUserBtn) {
     }
 
     function renderTasks() {
+        if (!tasksFeed) return;
         tasksFeed.innerHTML = "";
         const list = groupMemoryDatabase[currentEditingGroupId].tasks;
         list.forEach((task, idx) => {
@@ -736,43 +703,38 @@ if (navUserBtn) {
             const isChecked = task.completed ? "checked" : "";
 
             card.innerHTML = `
-                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-top:10px;">
                     <input type="checkbox" class="task-checkbox-trigger" ${isChecked} style="transform: scale(1.2); margin-top: 4px; cursor: pointer;">
                     <div style="flex: 1;">
                         <div class="mural-post-meta">📍 Cadastrado por: <strong>${task.author.toUpperCase()}</strong></div>
-                        <p class="${textStyleClass}" style="margin: 0; font-weight: 500;">${task.text}</p>
+                        <p class="${textStyleClass}" style="margin: 5px 0; font-weight: 500;">${task.text}</p>
                         <div class="mural-card-actions">
-                            <button class="mural-post-btn-edit">✏️ Editar</button>
-                            <button class="mural-post-btn-delete"><i class="fa-solid fa-trash-can"></i> Excluir</button>
+                            <button class="mural-post-btn-edit" style="cursor:pointer; background:none; border:none; color:#2563eb; font-size:0.85rem; margin-right:10px;">✏️ Editar</button>
+                            <button class="mural-post-btn-delete" style="cursor:pointer; background:none; border:none; color:#ef4444; font-size:0.85rem;">🗑️ Excluir</button>
                         </div>
                     </div>
                 </div>
             `;
-
             card.querySelector(".task-checkbox-trigger").addEventListener("change", (e) => {
                 task.completed = e.target.checked;
                 renderTasks();
                 renderGlobalTasks();
             });
-
             card.querySelector(".mural-post-btn-edit").addEventListener("click", () => {
                 inputTask.value = task.text;
                 inputTask.focus();
                 btnPostTask.setAttribute("data-edit-index", idx);
                 btnPostTask.textContent = "Salvar Alterações";
             });
-
             card.querySelector(".mural-post-btn-delete").addEventListener("click", () => {
                 list.splice(idx, 1);
                 renderTasks();
                 renderGlobalTasks();
             });
-
             tasksFeed.appendChild(card);
         });
     }
 
-    // ================= RE-RENDERIZADOR DE TAREFAS GLOBAIS =================
     function renderGlobalTasks() {
         if (!globalTasksContainer) return;
         globalTasksContainer.innerHTML = "";
@@ -785,9 +747,9 @@ if (navUserBtn) {
                 if (!task.completed) {
                     pendingCount++;
                     const itemHTML = `
-                        <div class="global-task-item">
-                            <span>${task.text}</span>
-                            <small><i class="fa-solid fa-graduation-cap"></i> Grupo: ${group.name}</small>
+                        <div class="global-task-item" style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+                            <span>${task.text}</span><br>
+                            <small style="color:#64748b;"><i class="fa-solid fa-graduation-cap"></i> Grupo: ${group.name}</small>
                         </div>
                     `;
                     globalTasksContainer.insertAdjacentHTML("beforeend", itemHTML);
@@ -830,17 +792,19 @@ if (navUserBtn) {
     }
 
     function renderMessages() {
+        if (!messagesFeed) return;
         messagesFeed.innerHTML = "";
         const list = groupMemoryDatabase[currentEditingGroupId].messages;
         list.forEach((msg, idx) => {
             const card = document.createElement("div");
             card.className = "mural-post-card";
+            card.style.marginTop = "10px";
             card.innerHTML = `
                 <div class="mural-post-meta">👤 Enviado por: <strong>${msg.author.toUpperCase()}</strong></div>
-                <p>${msg.text}</p>
+                <p style="margin: 5px 0;">${msg.text}</p>
                 <div class="mural-card-actions">
-                    <button class="mural-post-btn-edit">✏️ Editar recado</button>
-                    <button class="mural-post-btn-delete"><i class="fa-solid fa-trash-can"></i> Excluir</button>
+                    <button class="mural-post-btn-edit" style="cursor:pointer; background:none; border:none; color:#2563eb; font-size:0.85rem; margin-right:10px;">✏️ Editar recado</button>
+                    <button class="mural-post-btn-delete" style="cursor:pointer; background:none; border:none; color:#ef4444; font-size:0.85rem;">🗑️ Excluir</button>
                 </div>
             `;
 
@@ -862,126 +826,261 @@ if (navUserBtn) {
 
     if (document.getElementById("btn-back-to-groups")) {
         document.getElementById("btn-back-to-groups").addEventListener("click", () => {
-            viewClassroom.classList.add("hidden"); viewGrupos.classList.remove("hidden");
-            document.getElementById("nav-inicio-btn").classList.remove("active");
-            document.getElementById("nav-grupos-btn").classList.add("active");
+            if (viewClassroom) viewClassroom.classList.add("hidden"); 
+            if (viewGrupos) viewGrupos.classList.remove("hidden");
+            if (navInicioBtn) navInicioBtn.classList.remove("active");
+            if (navGruposBtn) navGruposBtn.classList.add("active");
         });
     }
 
-    // ================= SISTEMA DE CALENDÁRIO DINÂMICO =================
+    // ================= SISTEMA DE CALENDÁRIO DINÂMICO E EVENTOS DO DIA =================
+    const weekdaysMap = [
+        "Domingo",
+        "Segunda-feira",
+        "Terça-feira",
+        "Quarta-feira",
+        "Quinta-feira",
+        "Sexta-feira",
+        "Sábado"
+    ];
 
-// Array para traduzir o dia da semana obtido no Date() para o formato do seu banco
-const weekdaysMap = [
-    "Domingo",
-    "Segunda-feira",
-    "Terça-feira",
-    "Quarta-feira",
-    "Quinta-feira",
-    "Sexta-feira",
-    "Sábado"
-];
-
-// Escuta o clique no botão da Agenda no menu lateral
-if (navAgendaBtn) {
-    navAgendaBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        resetActiveNav();
-        navAgendaBtn.classList.add("active");
-        if (viewAgenda) viewAgenda.classList.remove("hidden");
-        
-        // Define o mês atual do sistema ao abrir pela primeira vez
-        if (monthSelect) {
-            const currentMonth = new Date().getMonth();
-            monthSelect.value = currentMonth;
-            renderCalendar(currentMonth);
-        }
-    });
-}
-
-// Escuta a mudança de mês na caixinha de seleção (Select)
-if (monthSelect) {
-    monthSelect.addEventListener("change", (e) => {
-        renderCalendar(parseInt(e.target.value));
-    });
-}
-
-function renderCalendar(monthIndex) {
-    if (!daysGrid) return;
-    daysGrid.innerHTML = "";
-
-    const currentYear = new Date().getFullYear();
-
-    // Primeiro dia do mês escolhido (para saber em qual dia da semana começa)
-    const firstDayOfMonth = new Date(currentYear, monthIndex, 1).getDay();
-    // Quantidade de dias que o mês possui
-    const totalDaysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
-
-    // 1. Cria os espaços em branco para alinhar o início do mês ao dia da semana correto
-    for (let i = 0; i < firstDayOfMonth; i++) {
-        const emptyCell = document.createElement("div");
-        daysGrid.appendChild(emptyCell);
+    if (navAgendaBtn) {
+        navAgendaBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav();
+            navAgendaBtn.classList.add("active");
+            if (viewAgenda) viewAgenda.classList.remove("hidden");
+            
+            if (monthSelect) {
+                const currentMonth = new Date().getMonth();
+                monthSelect.value = currentMonth;
+                renderCalendar(currentMonth);
+            }
+        });
     }
 
-    // 2. Coleta todos os agendamentos salvos em memória de todos os grupos
-    let allActiveSchedules = [];
-    Object.values(groupMemoryDatabase).forEach(group => {
-        if (group.schedules) {
-            group.schedules.forEach(sched => {
-                allActiveSchedules.push({
-                    text: sched, // Ex: "Segunda-feira às 14:00 - 16:00"
-                    groupName: group.name
-                });
+    if (monthSelect) {
+        monthSelect.addEventListener("change", (e) => {
+            renderCalendar(parseInt(e.target.value));
+        });
+    }
+
+    // Fecha o modal da agenda ao clicar no botão 'X'
+    if (closeAgendaModalBtn) {
+        closeAgendaModalBtn.addEventListener("click", () => {
+            agendaDayModal.classList.add("hidden");
+            if (agendaModalForm) agendaModalForm.reset();
+        });
+    }
+
+    // Captura o submit do formulário de novo evento dentro do quadradinho/modal
+    if (agendaModalForm) {
+        agendaModalForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const titleText = agendaModalInputTitle.value.trim();
+            if (!titleText) return;
+
+            // Insere o evento no banco global independente com um ID único para remoção posterior
+            globalEventsDatabase.push({
+                id: `evt-${Date.now()}`,
+                year: selectedYearContext,
+                month: selectedMonthContext,
+                day: selectedDayContext,
+                title: titleText
             });
+
+            agendaModalForm.reset();
+            
+            // Re-renderiza a lista interna do modal para mostrar o que acabou de ser criado
+            openDayDetailsModal(selectedDayContext, selectedMonthContext, selectedYearContext);
+            
+            // Re-renderiza o calendário de fundo para aplicar o novo badge verde
+            renderCalendar(selectedMonthContext);
+        });
+    }
+
+    // Função central que monta a lista de previsões do dia selecionado e exibe o modal
+    function openDayDetailsModal(day, monthIndex, year) {
+        selectedDayContext = day;
+        selectedMonthContext = monthIndex;
+        selectedYearContext = year;
+
+        if (agendaModalDateTitle) {
+            agendaModalDateTitle.textContent = `Previsões para o Dia ${day}/${monthIndex + 1}/${year}`;
         }
-    });
 
-    // 3. Renderiza cada dia do mês
-    for (let day = 1; day <= totalDaysInMonth; day++) {
-        const dayCell = document.createElement("div");
-        
-        // Estilo básico do card do dia
-        dayCell.style.background = "#f8fafc";
-        dayCell.style.border = "1px solid #e2e8f0";
-        dayCell.style.borderRadius = "8px";
-        dayCell.style.padding = "10px";
-        dayCell.style.minHeight = "70px";
-        dayCell.style.display = "flex";
-        dayCell.style.flexDirection = "column";
-        dayCell.style.justifyContent = "space-between";
-        dayCell.style.position = "relative";
+        if (!agendaModalEventsList) return;
+        agendaModalEventsList.innerHTML = "";
 
-        // Número do dia
-        dayCell.innerHTML = `<span style="font-weight: 600; color: #1e293b; font-size: 0.9rem;">${day}</span>`;
+        let matchingItemsCount = 0;
 
-        // Descobre qual o dia da semana dessa data específica
-        const specificDate = new Date(currentYear, monthIndex, day);
+        // 1. Busca Reuniões dos Grupos vinculadas ao dia da semana
+        const specificDate = new Date(year, monthIndex, day);
         const dayOfWeekName = weekdaysMap[specificDate.getDay()];
 
-        // Verifica se há alguma reunião agendada para este dia da semana
-        allActiveSchedules.forEach(sched => {
-            // Se a string do agendamento contiver o nome do dia da semana (ex: "Segunda-feira")
-            if (sched.text.includes(dayOfWeekName)) {
-                const badge = document.createElement("div");
-                badge.style.background = "#2563eb";
-                badge.style.color = "white";
-                badge.style.fontSize = "0.7rem";
-                badge.style.padding = "2px 4px";
-                badge.style.borderRadius = "4px";
-                badge.style.marginTop = "4px";
-                badge.style.fontWeight = "bold";
-                badge.style.overflow = "hidden";
-                badge.style.textOverflow = "ellipsis";
-                badge.style.whiteSpace = "nowrap";
-                badge.title = `${sched.groupName}: ${sched.text}`;
-                badge.textContent = sched.groupName;
-                
-                dayCell.appendChild(badge);
-                dayCell.style.background = "#eff6ff"; // destaca o fundo do dia com reunião
-                dayCell.style.borderColor = "#bfdbfe";
+        Object.values(groupMemoryDatabase).forEach(group => {
+            if (group.schedules) {
+                group.schedules.forEach(sched => {
+                    if (sched.includes(dayOfWeekName)) {
+                        matchingItemsCount++;
+                        const item = document.createElement("div");
+                        item.style.padding = "8px 12px";
+                        item.style.background = "#eff6ff";
+                        item.style.borderLeft = "4px solid #2563eb";
+                        item.style.borderRadius = "4px";
+                        item.style.fontSize = "0.85rem";
+                        item.innerHTML = `<strong style="color:#1e40af;">👥 Grupo: ${group.name}</strong><br><span style="color:#1e293b;">${sched}</span>`;
+                        agendaModalEventsList.appendChild(item);
+                    }
+                });
             }
         });
 
-        daysGrid.appendChild(dayCell);
+        // 2. Busca Eventos Pessoais Independentes criados para essa data exata
+        globalEventsDatabase.forEach(evt => {
+            if (evt.day === day && evt.month === monthIndex && evt.year === year) {
+                matchingItemsCount++;
+                const item = document.createElement("div");
+                item.style.padding = "8px 12px";
+                item.style.background = "#ecfdf5";
+                item.style.borderLeft = "4px solid #10b981";
+                item.style.borderRadius = "4px";
+                item.style.fontSize = "0.85rem";
+                item.style.display = "flex";
+                item.style.justifyContent = "space-between";
+                item.style.alignItems = "center";
+                item.style.gap = "10px";
+
+                item.innerHTML = `
+                    <div>
+                        <strong style="color:#047857;">⭐ Evento Pessoal:</strong><br>
+                        <span style="color:#1e293b;">${evt.title}</span>
+                    </div>
+                    <button class="btn-delete-event" data-id="${evt.id}" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.1rem; padding: 4px; display: flex; align-items: center; justify-content: center; transition: transform 0.1s;" title="Remover Evento">🗑️</button>
+                `;
+
+                // Adiciona o evento de remoção ao botão recém-criado
+                item.querySelector(".btn-delete-event").addEventListener("click", (e) => {
+                    const eventId = e.currentTarget.getAttribute("data-id");
+                    if (confirm("Deseja realmente remover este compromisso?")) {
+                        // Filtra o banco de dados removendo o item correspondente
+                        globalEventsDatabase = globalEventsDatabase.filter(event => event.id !== eventId);
+                        
+                        // Atualiza a visualização do modal atualizado e do calendário de fundo
+                        openDayDetailsModal(day, monthIndex, year);
+                        renderCalendar(monthIndex);
+                    }
+                });
+
+                agendaModalEventsList.appendChild(item);
+            }
+        });
+
+        // 3. Se não houver nada previsto, exibe a mensagem informativa
+        if (matchingItemsCount === 0) {
+            agendaModalEventsList.innerHTML = `
+                <div style="text-align: center; color: #64748b; font-style: italic; padding: 15px; font-size: 0.9rem; background: #f8fafc; border-radius: 6px; border: 1px dashed #cbd5e1;">
+                    Não há nada previsto para este dia.
+                </div>
+            `;
+        }
+
+        // Exibe o modal na tela removendo a classe hidden
+        if (agendaDayModal) agendaDayModal.classList.remove("hidden");
     }
-}
+
+    function renderCalendar(monthIndex) {
+        if (!daysGrid) return;
+        daysGrid.innerHTML = "";
+
+        const currentYear = new Date().getFullYear();
+        const firstDayOfMonth = new Date(currentYear, monthIndex, 1).getDay();
+        const totalDaysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
+
+        for (let i = 0; i < firstDayOfMonth; i++) {
+            const emptyCell = document.createElement("div");
+            daysGrid.appendChild(emptyCell);
+        }
+
+        let allActiveSchedules = [];
+        Object.values(groupMemoryDatabase).forEach(group => {
+            if (group.schedules) {
+                group.schedules.forEach(sched => {
+                    allActiveSchedules.push({
+                        text: sched, 
+                        groupName: group.name
+                    });
+                });
+            }
+        });
+
+        for (let day = 1; day <= totalDaysInMonth; day++) {
+            const dayCell = document.createElement("div");
+            dayCell.style.background = "#f8fafc";
+            dayCell.style.border = "1px solid #e2e8f0";
+            dayCell.style.borderRadius = "8px";
+            dayCell.style.padding = "10px";
+            dayCell.style.minHeight = "85px";
+            dayCell.style.display = "flex";
+            dayCell.style.flexDirection = "column";
+            dayCell.style.justifyContent = "flex-start";
+            dayCell.style.gap = "4px";
+            dayCell.style.position = "relative";
+            dayCell.style.cursor = "pointer";
+
+            dayCell.innerHTML = `<span style="font-weight: 600; color: #1e293b; font-size: 0.9rem;">${day}</span>`;
+            
+            const specificDate = new Date(currentYear, monthIndex, day);
+            const dayOfWeekName = weekdaysMap[specificDate.getDay()];
+
+            // Adiciona marcadores de reuniões de grupos no layout do calendário
+            allActiveSchedules.forEach(sched => {
+                if (sched.text.includes(dayOfWeekName)) {
+                    const badge = document.createElement("div");
+                    badge.style.background = "#2563eb";
+                    badge.style.color = "white";
+                    badge.style.fontSize = "0.7rem";
+                    badge.style.padding = "2px 4px";
+                    badge.style.borderRadius = "4px";
+                    badge.style.fontWeight = "bold";
+                    badge.style.overflow = "hidden";
+                    badge.style.textOverflow = "ellipsis";
+                    badge.style.whiteSpace = "nowrap";
+                    badge.textContent = `👥 ${sched.groupName}`;
+                    
+                    dayCell.appendChild(badge);
+                    dayCell.style.background = "#eff6ff"; 
+                    dayCell.style.borderColor = "#bfdbfe";
+                }
+            });
+
+            // Adiciona marcadores para os eventos cadastrados de forma independente
+            globalEventsDatabase.forEach(evt => {
+                if (evt.day === day && evt.month === monthIndex && evt.year === currentYear) {
+                    const badge = document.createElement("div");
+                    badge.style.background = "#10b981";
+                    badge.style.color = "white";
+                    badge.style.fontSize = "0.7rem";
+                    badge.style.padding = "2px 4px";
+                    badge.style.borderRadius = "4px";
+                    badge.style.fontWeight = "bold";
+                    badge.style.overflow = "hidden";
+                    badge.style.textOverflow = "ellipsis";
+                    badge.style.whiteSpace = "nowrap";
+                    badge.textContent = `⭐ ${evt.title}`;
+                    
+                    dayCell.appendChild(badge);
+                }
+            });
+
+            // --- NOVO COMPORTAMENTO DE CLIQUE: SEM PROMPTS, ABRE O MODAL CENTRALIZADO ---
+            dayCell.addEventListener("click", (e) => {
+                if (e.target !== dayCell && e.target.tagName !== 'SPAN') return;
+                
+                openDayDetailsModal(day, monthIndex, currentYear);
+            });
+
+            daysGrid.appendChild(dayCell);
+        }
+    }
 });
