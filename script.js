@@ -18,22 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const navMensagensBtn = document.getElementById("nav-mensagens-btn");
     const viewMensagens = document.getElementById("view-mensagens");
     const btnAddContact = document.getElementById("btn-add-contact");
-    const contactInput = document.getElementById("contact-name");
     const contactsList = document.getElementById("contacts-list");
 
+    const navAgendaBtn = document.getElementById("nav-agenda-btn"); // mude para o ID correto do seu botão
+    const viewAgenda = document.getElementById("view-agenda"); // ID da div que criamos acima
+    const monthSelect = document.getElementById("agenda-month-select");
+    const daysGrid = document.getElementById("calendar-days-grid"); 
+
+    if (btnAddContact) {
     btnAddContact.addEventListener("click", () => {
-        const nome = contactInput.value.trim();
-
-        if (!nome) return;
-
-        const contato = document.createElement("button");
-        contato.textContent = nome;
-        contato.className = "contact-btn";
-
-        contactsList.appendChild(contato);
-
-        contactInput.value = "";
+        if (contactInput) contactInput.value = "";
     });
+}
 
     let currentUser = "ALUNO(A)";
 
@@ -79,39 +75,84 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ================= NAVEGAÇÃO INTERNA =================
-    const navInicioBtn = document.getElementById("nav-inicio-btn");
-    const navGruposBtn = document.getElementById("nav-grupos-btn");
-    const viewInicio = document.getElementById("view-inicio");
-    const viewGrupos = document.getElementById("view-grupos");
-    const viewClassroom = document.getElementById("view-group-classroom");
+    // ================= NAVEGAÇÃO INTERNA CORRIGIDA =================
+const navInicioBtn = document.getElementById("nav-inicio-btn");
+const navGruposBtn = document.getElementById("nav-grupos-btn");
+const viewInicio = document.getElementById("view-inicio");
+const viewGrupos = document.getElementById("view-grupos");
+const viewClassroom = document.getElementById("view-group-classroom");
 
-    function resetActiveNav() {
-        navInicioBtn.classList.remove("active"); 
-        navGruposBtn.classList.remove("active");
+function resetActiveNav() {
+    // 1. Remove a classe ativa de ABSOLUTAMENTE todos os botões do menu
+    if (navInicioBtn) navInicioBtn.classList.remove("active"); 
+    if (navGruposBtn) navGruposBtn.classList.remove("active");
+    if (navMensagensBtn) navMensagensBtn.classList.remove("active");
+    if (navUserBtn) navUserBtn.classList.remove("active");
+    if (navAgendaBtn) navAgendaBtn.classList.remove("active");
 
-        if(navUserBtn){
-            navUserBtn.classList.remove("active");
+    // 2. Esconde todas as telas do painel central
+    if (viewInicio) viewInicio.classList.add("hidden");
+    if (viewGrupos) viewGrupos.classList.add("hidden");
+    if (viewClassroom) viewClassroom.classList.add("hidden");
+    if (viewMensagens) viewMensagens.classList.add("hidden");
+    if (viewUser) viewUser.classList.add("hidden");
+    if (viewAgenda) viewAgenda.classList.add("hidden");
+}
+
+// Clique no botão Início
+if (navInicioBtn) {
+    navInicioBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetActiveNav(); 
+        navInicioBtn.classList.add("active"); // Destaca APENAS o início
+        if (viewInicio) viewInicio.classList.remove("hidden");
+    });
+}
+
+// Clique no botão Grupos
+if (navGruposBtn) {
+    navGruposBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetActiveNav();
+        navGruposBtn.classList.add("active"); // Destaca APENAS grupos
+        if (viewGrupos) viewGrupos.classList.remove("hidden");
+    });
+}
+
+// Clique no botão Mensagens
+if (navMensagensBtn) {
+    navMensagensBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetActiveNav();
+        navMensagensBtn.classList.add("active"); // Destaca APENAS mensagens
+        if (viewMensagens) viewMensagens.classList.remove("hidden");
+    });
+}
+
+// Clique no botão Perfil
+if (navUserBtn) {
+    navUserBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetActiveNav();
+        navUserBtn.classList.add("active"); // Destaca APENAS o perfil
+        if (viewUser) viewUser.classList.remove("hidden");
+
+        // Atualizações dos dados do perfil (Código anterior)
+        if (document.getElementById("profile-name")) {
+            document.getElementById("profile-name").textContent = currentUser.toUpperCase();
         }
-        if (navMensagensBtn) navMensagensBtn.classList.remove("active");
-        if (viewUser) viewUser.classList.add("hidden");
-    }
-
-    if (navMensagensBtn) {
-        navMensagensBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            resetActiveNav();
-            navMensagensBtn.classList.add("active");
-
-            viewInicio.classList.add("hidden");
-            viewGrupos.classList.add("hidden");
-            viewClassroom.classList.add("hidden");
-            viewUser.classList.add("hidden");
-
-            viewMensagens.classList.remove("hidden");
-        });
-    }
+        if (document.getElementById("profile-avatar")) {
+            document.getElementById("profile-avatar").textContent = currentUser.charAt(0).toUpperCase();
+        }
+        const totalGroupsCount = Object.keys(groupMemoryDatabase).length;
+        if (document.getElementById("profile-groups-joined")) {
+            document.getElementById("profile-groups-joined").textContent = totalGroupsCount;
+        }
+        if (document.getElementById("profile-groups-created")) {
+            document.getElementById("profile-groups-created").textContent = totalGroupsCount;
+        }
+    });
+}
 
     if (profilePic && navUserBtn) {
         profilePic.addEventListener("click", () => {
@@ -826,4 +867,121 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("nav-grupos-btn").classList.add("active");
         });
     }
+
+    // ================= SISTEMA DE CALENDÁRIO DINÂMICO =================
+
+// Array para traduzir o dia da semana obtido no Date() para o formato do seu banco
+const weekdaysMap = [
+    "Domingo",
+    "Segunda-feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado"
+];
+
+// Escuta o clique no botão da Agenda no menu lateral
+if (navAgendaBtn) {
+    navAgendaBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetActiveNav();
+        navAgendaBtn.classList.add("active");
+        if (viewAgenda) viewAgenda.classList.remove("hidden");
+        
+        // Define o mês atual do sistema ao abrir pela primeira vez
+        if (monthSelect) {
+            const currentMonth = new Date().getMonth();
+            monthSelect.value = currentMonth;
+            renderCalendar(currentMonth);
+        }
+    });
+}
+
+// Escuta a mudança de mês na caixinha de seleção (Select)
+if (monthSelect) {
+    monthSelect.addEventListener("change", (e) => {
+        renderCalendar(parseInt(e.target.value));
+    });
+}
+
+function renderCalendar(monthIndex) {
+    if (!daysGrid) return;
+    daysGrid.innerHTML = "";
+
+    const currentYear = new Date().getFullYear();
+
+    // Primeiro dia do mês escolhido (para saber em qual dia da semana começa)
+    const firstDayOfMonth = new Date(currentYear, monthIndex, 1).getDay();
+    // Quantidade de dias que o mês possui
+    const totalDaysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
+
+    // 1. Cria os espaços em branco para alinhar o início do mês ao dia da semana correto
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        const emptyCell = document.createElement("div");
+        daysGrid.appendChild(emptyCell);
+    }
+
+    // 2. Coleta todos os agendamentos salvos em memória de todos os grupos
+    let allActiveSchedules = [];
+    Object.values(groupMemoryDatabase).forEach(group => {
+        if (group.schedules) {
+            group.schedules.forEach(sched => {
+                allActiveSchedules.push({
+                    text: sched, // Ex: "Segunda-feira às 14:00 - 16:00"
+                    groupName: group.name
+                });
+            });
+        }
+    });
+
+    // 3. Renderiza cada dia do mês
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+        const dayCell = document.createElement("div");
+        
+        // Estilo básico do card do dia
+        dayCell.style.background = "#f8fafc";
+        dayCell.style.border = "1px solid #e2e8f0";
+        dayCell.style.borderRadius = "8px";
+        dayCell.style.padding = "10px";
+        dayCell.style.minHeight = "70px";
+        dayCell.style.display = "flex";
+        dayCell.style.flexDirection = "column";
+        dayCell.style.justifyContent = "space-between";
+        dayCell.style.position = "relative";
+
+        // Número do dia
+        dayCell.innerHTML = `<span style="font-weight: 600; color: #1e293b; font-size: 0.9rem;">${day}</span>`;
+
+        // Descobre qual o dia da semana dessa data específica
+        const specificDate = new Date(currentYear, monthIndex, day);
+        const dayOfWeekName = weekdaysMap[specificDate.getDay()];
+
+        // Verifica se há alguma reunião agendada para este dia da semana
+        allActiveSchedules.forEach(sched => {
+            // Se a string do agendamento contiver o nome do dia da semana (ex: "Segunda-feira")
+            if (sched.text.includes(dayOfWeekName)) {
+                const badge = document.createElement("div");
+                badge.style.background = "#2563eb";
+                badge.style.color = "white";
+                badge.style.fontSize = "0.7rem";
+                badge.style.padding = "2px 4px";
+                badge.style.borderRadius = "4px";
+                badge.style.marginTop = "4px";
+                badge.style.fontWeight = "bold";
+                badge.style.overflow = "hidden";
+                badge.style.textOverflow = "ellipsis";
+                badge.style.whiteSpace = "nowrap";
+                badge.title = `${sched.groupName}: ${sched.text}`;
+                badge.textContent = sched.groupName;
+                
+                dayCell.appendChild(badge);
+                dayCell.style.background = "#eff6ff"; // destaca o fundo do dia com reunião
+                dayCell.style.borderColor = "#bfdbfe";
+            }
+        });
+
+        daysGrid.appendChild(dayCell);
+    }
+}
 });
