@@ -383,6 +383,46 @@ a:hover {
     gap: 35px;
 }
 
+#view-recursos{
+    display: block;
+    width: 100%;
+}
+
+.resources-group-card{
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.resources-group-card h3{
+    margin: 0 0 18px;
+    color: #1e293b;
+    font-size: 1.2rem;
+}
+
+.resource-empty{
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    padding: 35px 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+.resource-empty i{
+    font-size: 38px;
+    color: #94a3b8;
+    margin-bottom: 15px;
+}
+
+.resource-empty p{
+    margin: 0;
+    font-size: .95rem;
+}
+
 /* Banner de Boas-Vindas */
 .welcome-banner {
     background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
@@ -410,6 +450,10 @@ a:hover {
     font-size: 0.95rem;
     opacity: 0.85;
     line-height: 1.5;
+}
+
+.view-recursos .welcome-banner{
+    padding-bottom: 30px;
 }
 
 .logo{
