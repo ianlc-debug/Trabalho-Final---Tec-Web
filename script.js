@@ -23,13 +23,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const navAgendaBtn = document.getElementById("nav-agenda-btn");
     const viewAgenda = document.getElementById("view-agenda");
     const monthSelect = document.getElementById("agenda-month-select");
-    const daysGrid = document.getElementById("calendar-days-grid"); 
+    const daysGrid = document.getElementById("calendar-days-grid");
+
+    // SELETORES DO NOVO MODAL DA AGENDA
+    const agendaDayModal = document.getElementById("agenda-day-modal");
+    const closeAgendaModalBtn = document.getElementById("close-agenda-modal-btn");
+    const agendaModalDateTitle = document.getElementById("agenda-modal-date-title");
+    const agendaModalEventsList = document.getElementById("agenda-modal-events-list");
+    const agendaModalForm = document.getElementById("agenda-modal-form");
+    const agendaModalInputTitle = document.getElementById("agenda-modal-input-title");
+
+    // Variáveis auxiliares para guardar qual dia está sendo editado no Modal aberto
+    let selectedDayContext = null;
+    let selectedMonthContext = null;
+    let selectedYearContext = null;
 
     if (btnAddContact) {
-    btnAddContact.addEventListener("click", () => {
-        if (contactInput) contactInput.value = "";
-    });
-}
+        btnAddContact.addEventListener("click", () => {
+            const contactInput = document.getElementById("contact-input");
+            if (contactInput) contactInput.value = "";
+        });
+    }
 
     let currentUser = "ALUNO(A)";
 
@@ -88,22 +102,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewGrupos = document.getElementById("view-grupos");
     const viewClassroom = document.getElementById("view-group-classroom");
 
-function resetActiveNav() {
-    // 1. Remove a classe ativa de ABSOLUTAMENTE todos os botões do menu
-    if (navInicioBtn) navInicioBtn.classList.remove("active"); 
-    if (navGruposBtn) navGruposBtn.classList.remove("active");
-    if (navMensagensBtn) navMensagensBtn.classList.remove("active");
-    if (navUserBtn) navUserBtn.classList.remove("active");
-    if (navAgendaBtn) navAgendaBtn.classList.remove("active");
+    function resetActiveNav() {
+        if (navInicioBtn) navInicioBtn.classList.remove("active");
+        if (navGruposBtn) navGruposBtn.classList.remove("active");
+        if (navMensagensBtn) navMensagensBtn.classList.remove("active");
+        if (navUserBtn) navUserBtn.classList.remove("active");
+        if (navAgendaBtn) navAgendaBtn.classList.remove("active");
 
-    // 2. Esconde todas as telas do painel central
-    if (viewInicio) viewInicio.classList.add("hidden");
-    if (viewGrupos) viewGrupos.classList.add("hidden");
-    if (viewClassroom) viewClassroom.classList.add("hidden");
-    if (viewMensagens) viewMensagens.classList.add("hidden");
-    if (viewUser) viewUser.classList.add("hidden");
-    if (viewAgenda) viewAgenda.classList.add("hidden");
-}
+        if (viewInicio) viewInicio.classList.add("hidden");
+        if (viewGrupos) viewGrupos.classList.add("hidden");
+        if (viewClassroom) viewClassroom.classList.add("hidden");
+        if (viewMensagens) viewMensagens.classList.add("hidden");
+        if (viewUser) viewUser.classList.add("hidden");
+        if (viewAgenda) viewAgenda.classList.add("hidden");
+    }
 
     if (navInicioBtn) {
         navInicioBtn.addEventListener("click", (e) => {
