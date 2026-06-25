@@ -420,33 +420,41 @@ if (navUserBtn) {
     }
 
     function abrirClassroom(groupId) {
-        currentEditingGroupId = groupId;
-        const gData = groupMemoryDatabase[groupId];
+    currentEditingGroupId = groupId;
+    const gData = groupMemoryDatabase[groupId];
 
-        viewInicio.classList.add("hidden");
-        viewGrupos.classList.add("hidden");
-        viewClassroom.classList.remove("hidden");
-        viewMensagens.classList.add("hidden");
-        
-        classroomMainWidgets.classList.remove("hidden");
-        classroomMembersSection.classList.add("hidden");
-        classroomInviteSection.classList.add("hidden");
+    // 1. ESCONDE TODAS AS OUTRAS ABAS
+    if (viewInicio) viewInicio.classList.add("hidden");
+    if (viewGrupos) viewGrupos.classList.add("hidden");
+    if (viewMensagens) viewMensagens.classList.add("hidden");
+    if (viewAgenda) viewAgenda.classList.add("hidden");     // <== LINHA NOVA
+    if (viewRecursos) viewRecursos.classList.add("hidden"); // <== LINHA NOVA
+    if (viewUser) viewUser.classList.add("hidden");         // <== LINHA NOVA (Perfil)
 
-        classroomGroupName.textContent = gData.name;
-        classroomGroupSubject.textContent = gData.subject;
-        classroomGroupType.textContent = gData.privacy;
-        classroomGroupCode.textContent = gData.code;
+    // 2. MOSTRA A TELA DO GRUPO
+    viewClassroom.classList.remove("hidden");
+    
+    classroomMainWidgets.classList.remove("hidden");
+    classroomMembersSection.classList.add("hidden");
+    classroomInviteSection.classList.add("hidden");
 
-        textareaMessage.value = "";
-        inputTask.value = "";
+    classroomGroupName.textContent = gData.name;
+    classroomGroupSubject.textContent = gData.subject;
+    classroomGroupType.textContent = gData.privacy;
+    classroomGroupCode.textContent = gData.code;
+
+    textareaMessage.value = "";
+    inputTask.value = "";
+    if (btnPostTask) {
         btnPostTask.removeAttribute("data-edit-index");
         btnPostTask.textContent = "Cadastrar Atividade";
-
-        updateMemberCountDisplay();
-        renderSchedules();
-        renderTasks();
-        renderMessages();
     }
+
+    updateMemberCountDisplay();
+    renderSchedules();
+    renderTasks();
+    renderMessages();
+}
 
     function updateMemberCountDisplay() {
         const gData = groupMemoryDatabase[currentEditingGroupId];
