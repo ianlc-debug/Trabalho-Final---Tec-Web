@@ -25,11 +25,81 @@ document.addEventListener("DOMContentLoaded", () => {
     const monthSelect = document.getElementById("agenda-month-select");
     const daysGrid = document.getElementById("calendar-days-grid"); 
 
+    const navRecursosBtn =
+    document.getElementById("nav-recursos-btn");
+
+    const viewRecursos =
+    document.getElementById("view-recursos");
+
+    const resourcesContainer =
+    document.getElementById("resources-container");
+
     if (btnAddContact) {
-    btnAddContact.addEventListener("click", () => {
-        if (contactInput) contactInput.value = "";
-    });
-}
+        btnAddContact.addEventListener("click", () => {
+            if (contactInput) contactInput.value = "";
+        });
+    }
+    
+    if(navRecursosBtn){
+        
+        navRecursosBtn.addEventListener("click",(e)=>{
+            
+            e.preventDefault();
+
+            resetActiveNav();
+            
+            navRecursosBtn.classList.add("active");
+            
+            viewRecursos.classList.remove("hidden");
+           
+            renderResources();
+
+        });
+
+    }
+
+    function renderResources(){
+
+        resourcesContainer.innerHTML = "";
+
+        const grupos = Object.values(groupMemoryDatabase);
+
+        if(grupos.length === 0){
+            resourcesContainer.innerHTML = `
+                <div class="empty-state-box">
+                    <p>Você ainda não participa de nenhum grupo.</p>
+                </div>
+            `;
+
+            return;
+        }
+
+        grupos.forEach(grupo=>{
+
+            resourcesContainer.innerHTML += `
+
+                <div class="resources-group-card">
+
+                    <h3>${grupo.name}</h3>
+
+                    <div class="resource-empty">
+
+                        <i class="fa-solid fa-folder-open"
+                        style="font-size:35px;margin-bottom:10px;color:#94a3b8;"></i>
+
+                        <p>
+                            Nenhum material compartilhado neste grupo.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+    }
 
     let currentUser = "ALUNO(A)";
 
@@ -89,6 +159,7 @@ function resetActiveNav() {
     if (navMensagensBtn) navMensagensBtn.classList.remove("active");
     if (navUserBtn) navUserBtn.classList.remove("active");
     if (navAgendaBtn) navAgendaBtn.classList.remove("active");
+    if (navRecursosBtn) navRecursosBtn.classList.remove("active");
 
     // 2. Esconde todas as telas do painel central
     if (viewInicio) viewInicio.classList.add("hidden");
@@ -97,6 +168,7 @@ function resetActiveNav() {
     if (viewMensagens) viewMensagens.classList.add("hidden");
     if (viewUser) viewUser.classList.add("hidden");
     if (viewAgenda) viewAgenda.classList.add("hidden");
+    if(viewRecursos) viewRecursos.classList.add("hidden");
 }
 
 // Clique no botão Início
