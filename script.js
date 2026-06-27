@@ -738,7 +738,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <div>
                         <strong style="color: #1e293b; font-size: 0.95rem;">${currentUser.toUpperCase()}</strong>
-                        <span style="font-size: 0.75rem; background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold;">Você (Coordenador)</span>
+                        <span style="font-size: 0.75rem; background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold;">Você (Administrador)</span>
                     </div>
                 </div>
             `;
