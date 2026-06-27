@@ -1089,3 +1089,32 @@ img{
 .search-suggestions-box.hidden {
     display: none !important;
 }
+
+/* ================= MODAL DA AGENDA ================= */
+.event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #334155;
+}
+
+.event-item .delete-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: background 0.2s;
+    font-weight: 600;
+}
+
+.event-item .delete-btn:hover {
+    background: #dc2626;
+}

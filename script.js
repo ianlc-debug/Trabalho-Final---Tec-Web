@@ -25,14 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const monthSelect = document.getElementById("agenda-month-select");
     const daysGrid = document.getElementById("calendar-days-grid"); 
 
-    const navRecursosBtn =
-    document.getElementById("nav-recursos-btn");
+    const navRecursosBtn = document.getElementById("nav-recursos-btn");
+    const viewRecursos = document.getElementById("view-recursos");
+    const resourcesContainer = document.getElementById("resources-container");
 
-    const viewRecursos =
-    document.getElementById("view-recursos");
-
-    const resourcesContainer =
-    document.getElementById("resources-container");
+    const dayDetailsModal = document.getElementById("day-details-modal");
+    const closeDayModalBtn = document.getElementById("close-day-modal-btn");
+    const dayModalTitle = document.getElementById("day-modal-title");
+    const dayModalEventsList = document.getElementById("day-modal-events-list");
+    const dayModalForm = document.getElementById("day-modal-form");
+    const dayModalInput = document.getElementById("day-modal-input");
 
     if (btnAddContact) {
         btnAddContact.addEventListener("click", () => {
@@ -985,83 +987,288 @@ if (monthSelect) {
     });
 }
 
-function renderCalendar(monthIndex) {
-    if (!daysGrid) return;
-    daysGrid.innerHTML = "";
+// =================================================================
+    // NAVEGAÇÃO E LÓGICA DA AGENDA (UNIFICADA E CORRIGIDA)
+    // =================================================================
 
-    const currentYear = new Date().getFullYear();
-
-    // Primeiro dia do mês escolhido (para saber em qual dia da semana começa)
-    const firstDayOfMonth = new Date(currentYear, monthIndex, 1).getDay();
-    // Quantidade de dias que o mês possui
-    const totalDaysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
-
-    // 1. Cria os espaços em branco para alinhar o início do mês ao dia da semana correto
-    for (let i = 0; i < firstDayOfMonth; i++) {
-        const emptyCell = document.createElement("div");
-        daysGrid.appendChild(emptyCell);
+    // 1. Base de dados global de eventos (garante que o array existe)
+    if (typeof globalEventsDatabase === 'undefined') {
+        window.globalEventsDatabase = [];
     }
 
-    // 2. Coleta todos os agendamentos salvos em memória de todos os grupos
-    let allActiveSchedules = [];
-    Object.values(groupMemoryDatabase).forEach(group => {
-        if (group.schedules) {
-            group.schedules.forEach(sched => {
-                allActiveSchedules.push({
-                    text: sched, // Ex: "Segunda-feira às 14:00 - 16:00"
-                    groupName: group.name
-                });
-            });
-        }
-    });
+    // Variável para armazenar a data em foco do modal
+    let currentSelectedDate = { day: null, month: null, year: null };
 
-    // 3. Renderiza cada dia do mês
-    for (let day = 1; day <= totalDaysInMonth; day++) {
-        const dayCell = document.createElement("div");
-        
-        // Estilo básico do card do dia
-        dayCell.style.background = "#f8fafc";
-        dayCell.style.border = "1px solid #e2e8f0";
-        dayCell.style.borderRadius = "8px";
-        dayCell.style.padding = "10px";
-        dayCell.style.minHeight = "70px";
-        dayCell.style.display = "flex";
-        dayCell.style.flexDirection = "column";
-        dayCell.style.justifyContent = "space-between";
-        dayCell.style.position = "relative";
+    // Ao clicar no botão "Agenda" no menu lateral
+    if (navAgendaBtn) {
+        navAgendaBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetActiveNav();
+            navAgendaBtn.classList.add("active");
+            if (viewAgenda) viewAgenda.classList.remove("hidden");
 
-        // Número do dia
-        dayCell.innerHTML = `<span style="font-weight: 600; color: #1e293b; font-size: 0.9rem;">${day}</span>`;
-
-        // Descobre qual o dia da semana dessa data específica
-        const specificDate = new Date(currentYear, monthIndex, day);
-        const dayOfWeekName = weekdaysMap[specificDate.getDay()];
-
-        // Verifica se há alguma reunião agendada para este dia da semana
-        allActiveSchedules.forEach(sched => {
-            // Se a string do agendamento contiver o nome do dia da semana (ex: "Segunda-feira")
-            if (sched.text.includes(dayOfWeekName)) {
-                const badge = document.createElement("div");
-                badge.style.background = "#2563eb";
-                badge.style.color = "white";
-                badge.style.fontSize = "0.7rem";
-                badge.style.padding = "2px 4px";
-                badge.style.borderRadius = "4px";
-                badge.style.marginTop = "4px";
-                badge.style.fontWeight = "bold";
-                badge.style.overflow = "hidden";
-                badge.style.textOverflow = "ellipsis";
-                badge.style.whiteSpace = "nowrap";
-                badge.title = `${sched.groupName}: ${sched.text}`;
-                badge.textContent = sched.groupName;
-                
-                dayCell.appendChild(badge);
-                dayCell.style.background = "#eff6ff"; // destaca o fundo do dia com reunião
-                dayCell.style.borderColor = "#bfdbfe";
+            // Define o mês atual do sistema ao abrir pela primeira vez
+            if (monthSelect) {
+                const currentMonth = new Date().getMonth();
+                monthSelect.value = currentMonth;
+                renderCalendar(currentMonth);
             }
         });
-
-        daysGrid.appendChild(dayCell);
     }
-}
+
+    // Escuta a mudança de mês na caixinha de seleção (Select)
+    if (monthSelect) {
+        monthSelect.addEventListener("change", (e) => {
+            renderCalendar(parseInt(e.target.value));
+        });
+    }
+
+    // 2. FUNÇÃO RENDERIZAR CALENDÁRIO
+    function renderCalendar(monthIndex) {
+        if (!daysGrid) return;
+        daysGrid.innerHTML = "";
+
+        const anoAtual = typeof currentYear !== 'undefined' ? currentYear : new Date().getFullYear();
+        const totalDays = new Date(anoAtual, monthIndex + 1, 0).getDate();
+        const firstDayIndex = new Date(anoAtual, monthIndex, 1).getDay();
+
+        // Gera os espaços vazios do começo do mês
+        for (let i = 0; i < firstDayIndex; i++) {
+            const blankCell = document.createElement("div");
+            blankCell.style.padding = "10px";
+            blankCell.style.minHeight = "80px";
+            blankCell.style.background = "transparent";
+            daysGrid.appendChild(blankCell);
+        }
+
+        const todayObj = new Date();
+        const isCurrentMonth = todayObj.getMonth() === monthIndex && todayObj.getFullYear() === anoAtual;
+        const todayDay = todayObj.getDate();
+
+        const diasSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+
+        // Renderiza os dias numéricos
+        for (let day = 1; day <= totalDays; day++) {
+            const dayCell = document.createElement("div");
+            
+            dayCell.style.padding = "8px";
+            dayCell.style.minHeight = "85px";
+            dayCell.style.background = "#f8fafc";
+            dayCell.style.border = "1px solid #e2e8f0";
+            dayCell.style.borderRadius = "8px";
+            dayCell.style.cursor = "pointer";
+            dayCell.style.display = "flex";
+            dayCell.style.flexDirection = "column";
+            dayCell.style.gap = "4px";
+
+            const dayNumberSpan = document.createElement("span");
+            dayNumberSpan.textContent = day;
+            dayNumberSpan.style.pointerEvents = "none";
+            dayNumberSpan.style.fontWeight = "bold";
+            dayNumberSpan.style.color = "#64748b";
+            dayNumberSpan.style.fontSize = "0.9rem";
+            dayCell.appendChild(dayNumberSpan);
+
+            if (isCurrentMonth && day === todayDay) {
+                dayCell.style.background = "#eff6ff"; 
+                dayCell.style.borderColor = "#bfdbfe";
+                dayNumberSpan.style.color = "#2563eb";
+            }
+
+            // A) REUNIÕES DOS GRUPOS (Azul)
+            const specificDate = new Date(anoAtual, monthIndex, day);
+            const dayOfWeekName = diasSemana[specificDate.getDay()];
+
+            if (typeof groupMemoryDatabase !== 'undefined') {
+                Object.values(groupMemoryDatabase).forEach(group => {
+                    if (group.schedules && group.schedules.length > 0) {
+                        group.schedules.forEach(sched => {
+                            if (sched.includes(dayOfWeekName)) {
+                                const badgeAzul = document.createElement("div");
+                                badgeAzul.style.background = "#2563eb";
+                                badgeAzul.style.color = "white";
+                                badgeAzul.style.fontSize = "0.7rem";
+                                badgeAzul.style.padding = "2px 4px";
+                                badgeAzul.style.borderRadius = "4px";
+                                badgeAzul.style.fontWeight = "bold";
+                                badgeAzul.style.overflow = "hidden";
+                                badgeAzul.style.textOverflow = "ellipsis";
+                                badgeAzul.style.whiteSpace = "nowrap";
+                                badgeAzul.style.pointerEvents = "none"; 
+                                badgeAzul.textContent = group.name;
+                                
+                                dayCell.appendChild(badgeAzul);
+                                dayCell.style.background = "#eff6ff";
+                                dayCell.style.borderColor = "#bfdbfe";
+                            }
+                        });
+                    }
+                });
+            }
+
+            // B) EVENTOS PARTICULARES (Verde)
+            if (window.globalEventsDatabase) {
+                window.globalEventsDatabase.forEach(evt => {
+                    if (evt.day === day && evt.month === monthIndex && evt.year === anoAtual) {
+                        const badgeVerde = document.createElement("div");
+                        badgeVerde.style.background = "#10b981";
+                        badgeVerde.style.color = "white";
+                        badgeVerde.style.fontSize = "0.7rem";
+                        badgeVerde.style.padding = "2px 4px";
+                        badgeVerde.style.borderRadius = "4px";
+                        badgeVerde.style.fontWeight = "bold";
+                        badgeVerde.style.overflow = "hidden";
+                        badgeVerde.style.textOverflow = "ellipsis";
+                        badgeVerde.style.whiteSpace = "nowrap";
+                        badgeVerde.style.pointerEvents = "none"; 
+                        
+                        const titleText = evt.title ? evt.title : "Evento";
+                        badgeVerde.textContent = `⭐ ${titleText}`;
+                        
+                        dayCell.appendChild(badgeVerde);
+                    }
+                });
+            }
+
+            // Clique na célula ativa a abertura do modal
+            dayCell.addEventListener("click", () => {
+                openDayDetailsModal(day, monthIndex, anoAtual);
+            });
+
+            daysGrid.appendChild(dayCell);
+        }
+    }
+
+    // 3. FUNÇÕES DE CONTROLO DO MODAL (Colocadas no escopo correto)
+    function openDayDetailsModal(day, month, year) {
+        currentSelectedDate = { day, month, year };
+        
+        const dataFormatada = `${day.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
+        if (dayModalTitle) dayModalTitle.textContent = `Eventos do dia ${dataFormatada}`;
+        
+        renderDayEvents();
+        if (dayDetailsModal) dayDetailsModal.classList.remove("hidden");
+    }
+
+    function renderDayEvents() {
+        if (!dayModalEventsList) return;
+        dayModalEventsList.innerHTML = "";
+        
+        const { day, month, year } = currentSelectedDate;
+        
+        // 1. Array onde vamos juntar todos os eventos encontrados para o dia
+        let todosOsEventosDoDia = [];
+
+        // --- PARTE A: BUSCA AS REUNIÕES DOS GRUPOS (EVENTOS AZUIS) ---
+        const diasSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+        const specificDate = new Date(year, month, day);
+        const dayOfWeekName = diasSemana[specificDate.getDay()];
+
+        if (typeof groupMemoryDatabase !== 'undefined') {
+            Object.values(groupMemoryDatabase).forEach(group => {
+                if (group.schedules && group.schedules.length > 0) {
+                    group.schedules.forEach(sched => {
+                        if (sched.includes(dayOfWeekName)) {
+                            todosOsEventosDoDia.push({
+                                tipo: "grupo",
+                                title: `Aula/Reunião do grupo: ${group.name}`,
+                                desc: sched,
+                                originalObj: group
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // --- PARTE B: BUSCA OS EVENTOS PARTICULARES (EVENTOS VERDES) ---
+        if (window.globalEventsDatabase) {
+            window.globalEventsDatabase.forEach(evt => {
+                if (evt.day === day && evt.month === month && evt.year === year) {
+                    todosOsEventosDoDia.push({
+                        tipo: "particular",
+                        title: evt.title,
+                        originalObj: evt
+                    });
+                }
+            });
+        }
+
+        // 2. Se a lista unificada estiver vazia, mostra a mensagem padrão
+        if (todosOsEventosDoDia.length === 0) {
+            dayModalEventsList.innerHTML = `<p style="color: #94a3b8; font-size: 0.85rem; text-align: center; margin-top: 10px;">Nenhum evento para este dia.</p>`;
+            return;
+        }
+
+        // 3. Renderiza cada um dos eventos encontrados na tela do modal
+        todosOsEventosDoDia.forEach((evt) => {
+            const eventItem = document.createElement("div");
+            eventItem.style.display = "flex";
+            eventItem.style.justifyContent = "space-between";
+            eventItem.style.alignItems = "center";
+            eventItem.style.background = "#f8fafc";
+            eventItem.style.padding = "10px";
+            eventItem.style.border = "1px solid #e2e8f0";
+            eventItem.style.borderRadius = "6px";
+            eventItem.style.marginBottom = "8px";
+
+            if (evt.tipo === "grupo") {
+                // Layout para reuniões de grupo (Azul, sem botão de excluir direto por aqui)
+                eventItem.style.borderLeft = "4px solid #2563eb";
+                eventItem.innerHTML = `
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 0.9rem; color: #1e3a8a; font-weight: bold;">👥 ${evt.title}</span>
+                        <small style="font-size: 0.75rem; color: #64748b;">${evt.desc}</small>
+                    </div>
+                    <span style="font-size: 0.7rem; background: #dbeafe; color: #2563eb; padding: 2px 6px; border-radius: 4px; font-weight: bold;">Fixo</span>
+                `;
+            } else {
+                // Layout para eventos particulares (Verde, com o botão de excluir)
+                eventItem.style.borderLeft = "4px solid #10b981";
+                eventItem.innerHTML = `
+                    <span style="font-size: 0.9rem; color: #334155;">⭐ ${evt.title}</span>
+                    <button class="delete-btn" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.75rem;">Excluir</button>
+                `;
+
+                eventItem.querySelector(".delete-btn").addEventListener("click", () => {
+                    const globalIndex = window.globalEventsDatabase.indexOf(evt.originalObj);
+                    if (globalIndex > -1) window.globalEventsDatabase.splice(globalIndex, 1);
+                    
+                    renderDayEvents(); 
+                    renderCalendar(month); 
+                });
+            }
+
+            dayModalEventsList.appendChild(eventItem);
+        });
+    }
+
+    // Listeners de fecho e submissão do formulário do modal
+    if (closeDayModalBtn) {
+        closeDayModalBtn.addEventListener("click", () => {
+            dayDetailsModal.classList.add("hidden");
+        });
+    }
+
+    if (dayDetailsModal) {
+        dayDetailsModal.addEventListener("click", (e) => {
+            if (e.target === dayDetailsModal) dayDetailsModal.classList.add("hidden");
+        });
+    }
+
+    if (dayModalForm) {
+        dayModalForm.addEventListener("submit", (e) => {
+            e.preventDefault(); 
+            
+            const title = dayModalInput.value.trim();
+            if (!title) return;
+
+            const { day, month, year } = currentSelectedDate;
+            window.globalEventsDatabase.push({ title, day, month, year });
+            
+            dayModalInput.value = ""; 
+            renderDayEvents(); 
+            renderCalendar(month); 
+        });
+    }
 });
